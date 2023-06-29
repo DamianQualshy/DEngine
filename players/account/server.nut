@@ -305,7 +305,7 @@ class Player {
 	}
 
 	function setWalkstyle(walk){
-		applyPlayerOverlay(this.id, walk);
+		applyPlayerOverlay(this.id, Mds.id(walk));
 
 		this.walk = walk;
 	}
@@ -313,7 +313,7 @@ class Player {
 		return this.walk;
 	}
 	function resetWalkstyle(){
-		removePlayerOverlay(this.id, this.walk);
+		removePlayerOverlay(this.id, Mds.id(this.walk));
 
 		this.walk = "HUMANS.MDS";
 	}
@@ -425,6 +425,49 @@ class Player {
 	}
 
 
+	function init(){
+		this.setUsername("Username");
+		this.setPassword("password");
+		this.setPermissions(perm.ADMIN);
+		this.setColor(255, 255, 255);
+		this.setColorHex("FFFFFF");
+
+		this.setInstance("PC_HERO");
+
+		this.setHealth(500);
+		this.setMaxHealth(500);
+		this.setMana(500);
+		this.setMaxMana(500);
+		this.setStrength(100);
+		this.setDexterity(100);
+		this.setOneHandSkill(100);
+		this.setTwoHandSkill(100);
+		this.setBowSkill(100);
+		this.setCrossbowSkill(100);
+
+		this.setMagicCircle(6);
+
+		this.setSneakSkill(true);
+		this.setPicklockSkill(true);
+		this.setPickpocketSkill(true);
+		this.setRuneSkill(true);
+		this.setAlchemySkill(true);
+		this.setSmithSkill(true);
+		this.setTrophySkill(true);
+		this.setAcrobaticSkill(true);
+
+		this.logged = true;
+		this.afk = false;
+		this.invisible = false;
+		this.whitelist = false;
+
+		this.setVisual("Hum_Body_Naked0", 9, "Hum_Head_Pony", 18);
+		this.setScale(1.0, 1.0, 1.0, 1.0);
+		this.setWalkstyle("HUMANS.MDS");
+		this.setPosition(0.0, 0.0, 0.0, 0.0);
+	}
+
+
 	function save(){
 
 	}
@@ -437,45 +480,7 @@ class Player {
 addEventHandler("onPlayerJoin", function(pid){
 	Players[pid] <- Player(pid);
 
-	Players[pid].setUsername("Username");
-	Players[pid].setPassword("password");
-	Players[pid].setPermissions(perm.ADMIN);
-	Players[pid].setColor(255, 255, 255);
-	Players[pid].setColorHex("FFFFFF");
-
-	Players[pid].setInstance("PC_HERO");
-
-	Players[pid].setHealth(500);
-	Players[pid].setMaxHealth(500);
-	Players[pid].setMana(500);
-	Players[pid].setMaxMana(500);
-	Players[pid].setStrength(100);
-	Players[pid].setDexterity(100);
-	Players[pid].setOneHandSkill(100);
-	Players[pid].setTwoHandSkill(100);
-	Players[pid].setBowSkill(100);
-	Players[pid].setCrossbowSkill(100);
-
-	Players[pid].setMagicCircle(6);
-
-	Players[pid].setSneakSkill(true);
-	Players[pid].setPicklockSkill(true);
-	Players[pid].setPickpocketSkill(true);
-	Players[pid].setRuneSkill(true);
-	Players[pid].setAlchemySkill(true);
-	Players[pid].setSmithSkill(true);
-	Players[pid].setTrophySkill(true);
-	Players[pid].setAcrobaticSkill(true);
-
-	Players[pid].logged = true;
-	Players[pid].afk = false;
-	Players[pid].invisible = false;
-	Players[pid].whitelist = false;
-
-	Players[pid].setVisual("Hum_Body_Naked0", 9, "Hum_Head_Pony", 18);
-	Players[pid].setScale(1.0, 1.0, 1.0, 1.0);
-	Players[pid].setWalkstyle("HUMANS.MDS");
-	Players[pid].setPosition(0.0, 0.0, 0.0, 0.0);
+	Players[pid].init();
 });
 
 addEventHandler("onPlayerDisconnect", function(pid, reason){
