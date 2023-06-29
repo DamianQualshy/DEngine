@@ -1,4 +1,6 @@
 <server>
+	<import src="gui-framework/gui.xml" />
+
 	<import src="server/server.xml" />
 
 	<import src="calendar/calendar.xml" />
@@ -10,4 +12,6 @@
 	<import src="world/world.xml" />
 
 	<import src="players/players.xml" />
+	
+	<import src="interface/interface.xml" />
 </server>

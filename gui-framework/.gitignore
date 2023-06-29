@@ -1,0 +1,22 @@
+### Server binary files ###
+
+data.bin
+
+*.exe
+*.dll
+
+G2O_Server
+*.so
+
+### Server text files ###
+
+bans.xml
+config.xml
+items.xml
+mds.xml
+
+server.log
+
+### Windows files ###
+
+desktop.ini

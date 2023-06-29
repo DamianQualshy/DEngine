@@ -1,0 +1,3 @@
+<server>
+    <import src="escape-menu/escape-menu.xml" />
+</server>
