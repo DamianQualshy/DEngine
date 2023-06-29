@@ -7,3 +7,5 @@ items.xml
 mds.xml
 
 *.exe
+
+*.log
