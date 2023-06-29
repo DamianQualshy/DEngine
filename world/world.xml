@@ -1,0 +1,9 @@
+<server>
+	<import src="items/items.xml" />
+
+	<import src="monsters/monsters.xml" />
+
+	<import src="locations/locations.xml" />
+
+	<import src="chunks/chunks.xml" />
+</server>

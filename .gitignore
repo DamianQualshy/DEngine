@@ -1,0 +1,9 @@
+default/*
+waypoints/*
+
+bans.xml
+config.xml
+items.xml
+mds.xml
+
+*.exe

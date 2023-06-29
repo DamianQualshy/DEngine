@@ -1,0 +1,9 @@
+<server>
+	<import src="account/account.xml" />
+
+	<import src="damage/damage.xml" />
+
+	<import src="equipment/equipment.xml" />
+
+	<import src="classes/classes.xml" />
+</server>

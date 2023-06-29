@@ -1,0 +1,13 @@
+<server>
+	<import src="server/server.xml" />
+
+	<import src="calendar/calendar.xml" />
+
+	<import src="animations/animations.xml" />
+
+	<import src="chat/chat.xml" />
+
+	<import src="world/world.xml" />
+
+	<import src="players/players.xml" />
+</server>
