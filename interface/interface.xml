@@ -1,3 +1,4 @@
 <server>
     <import src="escape-menu/escape-menu.xml" />
+    <import src="base/base.xml" />
 </server>

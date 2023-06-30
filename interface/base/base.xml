@@ -1,0 +1,3 @@
+<server>
+    <script src="client.nut" type="client" /> />
+</server>
