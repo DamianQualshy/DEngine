@@ -4,13 +4,11 @@ BaseInterface <- {
     function ChangeControlsState(){
         if(IsInterfaceOpen){
             this.IsInterfaceOpen = false
-            setFreeze(false)
             disableControls(false)
             setCursorVisible(false)
             return
         }
         this.IsInterfaceOpen = true
-        setFreeze(true)
         disableControls(true)
         setCursorPosition(4096,4096)
         setCursorVisible(true)
