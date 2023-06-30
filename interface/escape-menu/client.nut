@@ -1,3 +1,4 @@
+setCursorVisible(true)
 local mainWindow = GUI.Window(anx(760), any(200), anx(400), any(400), "MENU_INGAME.TGA", null, false)
 mainWindow.setAlpha(200)
 mainWindow.setColor(255, 0, 0, true)
