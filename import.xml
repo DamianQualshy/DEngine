@@ -1,4 +1,6 @@
 <server>
+	<script src="config.nut" type="shared" />
+	
 	<import src="gui-framework/gui.xml" />
 
 	<import src="server/server.xml" />
@@ -14,4 +16,5 @@
 	<import src="players/players.xml" />
 	
 	<import src="interface/interface.xml" />
+	
 </server>
