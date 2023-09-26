@@ -1,11 +1,28 @@
-default/*
 waypoints/*
+cache/*
+
+database/*
+
+Immersive Engine/Utilities/MySQL_docs/*
+Immersive Engine/Utilities/GUI-Framework/examples/*
+Immersive Engine/Modules/*
 
 bans.xml
 config.xml
-items.xml
-mds.xml
 
 *.exe
 
 *.log
+
+libmariadb.dll
+lua51.dll
+*.de
+*.txt
+*.ini
+
+Bimbol Engine/*
+Chronicles/*
+filterscripts/*
+gamemodes/*
+vobprojects/*
+zeditor/*

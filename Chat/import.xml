@@ -1,0 +1,8 @@
+<server>
+	<script src="Chat.nut" type="client" />
+
+	<script src="Admin_Chat.nut" type="server" />
+	<script src="Server_Chat.nut" type="server" />
+	<script src="Private_Chat.nut" type="server" />
+	<script src="RP_Chat.nut" type="server" />
+</server>

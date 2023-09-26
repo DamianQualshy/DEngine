@@ -1,0 +1,3 @@
+instances <- [
+	"PC_HERO"
+];

@@ -1,0 +1,43 @@
+<server>
+	<script src="Config.nut" type="shared" />
+
+	<script src="Events/shared.nut" type="shared" />
+	<script src="Events/server.nut" type="server" />
+	<script src="Events/client.nut" type="client" />
+
+	<script src="Functions/shared.nut" type="shared" />
+	<script src="Functions/server.nut" type="server" />
+	<script src="Functions/client.nut" type="client" />
+
+	<script src="default/playerlist.nut" type="client" />
+	<script src="default/net.nut" type="client" />
+
+	<script src="default/file.nut" type="server" />
+	<script src="MySQL.nut" type="server" />
+
+	<script src="Tables/Classes.nut" type="shared" />
+	<script src="Tables/Creator.nut" type="shared" />
+	<script src="Tables/Animations.nut" type="shared" />
+	<script src="Tables/Locations.nut" type="shared" />
+	<script src="Tables/Worlds.nut" type="shared" />
+	<script src="Tables/Zones.nut" type="shared" />
+	<script src="Tables/Items.nut" type="shared" />
+
+	<script src="Packets/Log.nut" type="shared" />
+	<script src="Packets/Statistics.nut" type="shared" />
+	<script src="Packets/Creator.nut" type="shared" />
+	<script src="Packets/Items.nut" type="shared" />
+	<script src="Packets/Excavation.nut" type="shared" />
+	<script src="Packets/PlayerCMD.nut" type="shared" />
+
+	<script src="Classes/Player.nut" type="server" />
+	<script src="Classes/Item.nut" type="server" />
+	<script src="Classes/Ore.nut" type="client" />
+
+	<script src="Calendar.nut" type="shared" />
+
+	<script src="Misc/Log.nut" type="server" />
+
+	<script src="Misc/Cursor.nut" type="client" />
+	<script src="Misc/Keys.nut" type="client" />
+</server>

@@ -1,0 +1,12 @@
+<server>
+	<!-- <script src="Chunks/Chunks.nut" type="shared" />
+
+	<script src="Chunks/server.nut" type="server" />
+	<script src="Chunks/client.nut" type="client" /> -->
+
+	<script src="Zones/server.nut" type="server" />
+	<script src="Zones/client.nut" type="client" />
+
+	<script src="Excavation/server.nut" type="server" />
+	<script src="Excavation/client.nut" type="client" />
+</server>

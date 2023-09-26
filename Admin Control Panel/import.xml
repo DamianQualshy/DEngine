@@ -1,0 +1,9 @@
+<server>
+	<script src="ACP_Server.nut" type="server" />
+	<script src="ACP_Client.nut" type="client" />
+
+	<script src="Player_CMD.nut" type="server" />
+	<script src="Leader_CMD.nut" type="server" />
+	<script src="Moderator_CMD.nut" type="server" />
+	<script src="Admin_CMD.nut" type="server" />
+</server>

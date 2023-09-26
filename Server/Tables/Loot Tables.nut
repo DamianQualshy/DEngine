@@ -1,0 +1,14 @@
+lootTable <- {};
+lootTable[POCKET] <- {};
+lootTable[POUCH] <- {};
+lootTable[SMALL_CHEST] <- {};
+lootTable[MEDIUM_CHEST] <- {};
+lootTable[HEAVY_CHEST] <- {};
+lootTable[POOR_CHEST] <- {};
+lootTable[OLD_CHEST] <- {};
+lootTable[RICH_CHEST] <- {};
+lootTable[STONE_CHEST] <- {};
+lootTable[GRAVE] <- {};
+lootTable[SARCOPHAGUS] <- {};
+lootTable[MUMMY] <- {};
+lootTable[TREASURE] <- {};
