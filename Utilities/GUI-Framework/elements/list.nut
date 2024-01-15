@@ -435,6 +435,9 @@ class GUI.List extends GUIListClasses
 	function sort(func)
 	{
 		rows.sort(func)
+		foreach (i, row in rows)
+			row.id = i
+
 		refresh()
 	}
 

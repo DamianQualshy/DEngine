@@ -1,5 +1,5 @@
 # Drakania Engine
-Drakania Engine is a collective of scripts, intended to help new scripters with making their own gamemodes for Gothic 2 Online.
+Drakania Engine is a collective of scripts, intended to help new scripters with making their own servers for Gothic 2 Online.
 
 It doesn't require any outside modules or frameworks, since it already contains:
 - Patrix's GUI Framework
@@ -8,39 +8,45 @@ It doesn't require any outside modules or frameworks, since it already contains:
 - DocNITE's Tween Port
 - Patrix's AreaManager
 
-## What's Done
+## Features
 - RolePlay Chat
 - Admin Commands
 - Moderator Commands
 - Leader Commands
 - Player Commands
 - Player Class
+- Player and NPC rank classes
 - Primitive Calendar
 - Character Creator
 - Login/Register
 - Save/Load Client Data with MySQL
 - Animation Window
-- Locations
+- Discord Activity
+- Locations/Zones (WIP - restrictions)
 - Server-side Synchronized Statistics Window
-- Character Development
-- Mining
-- Server-side Items
+- Mining (WIP - calculations)
+- Server-side Items (WIP - calculations)
 - Save/Load Server Data with MySQL
-
-## To-Do
-- Damage System
 - Map split into Chunks
-- Chat split into Categories
-- Server-side Inventory
+- Seasons
+- Autosave
+- Check for changes in MySQL
 - Server-side NPCs
-- Server-side Game Menu
-- Trading
-- Houses
+- Damage System (WIP)
+- Server-side Inventory (WIP - dropping items and design)
+- Placing down NPCs in-game (WIP)
+- Character Kill system
+
+### To-Do
+- Character Development
 - Picking Herbs/Salvaging Animals
+- NPC AI
+- Trading
 - Crafting
+- Houses
 - Loot
 
-## Possible Features
+#### Possible Features
 - Quests
 - Journal
 - Dialogues
@@ -49,14 +55,21 @@ It doesn't require any outside modules or frameworks, since it already contains:
 - Pickpocket
 - Lockpicking
 - Arena
-- Seasons
 
-## Needed functions
-- Placing down NPCs in-game
+#### Needed functions
 - God Mode command
 - Temporary God Mode after Teleport (via command)
 - Alternative weapon animations
--
+- Manipulate chunk data in-game
 
-## Optional functions
--
+#### Optional functions
+- Admin Panel using GUI
+- Teleportation between locations using GUI
+- Camera showcase during Login time
+- Itempedia in Admin Panel
+- Server-side Game Menu
+- Chat split into Categories
+- White-List
+
+## In-depth Structure Explanation
+(...)

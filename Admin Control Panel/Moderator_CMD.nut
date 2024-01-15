@@ -6,9 +6,18 @@ function CMD_COLOR(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local r = args[1];
 	local g = args[2];
 	local b = args[3];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the color of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -29,7 +38,16 @@ function CMD_COLORHEX(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local hex = args[1];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the color of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -47,7 +65,16 @@ function CMD_NAMETEMP(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local name = args[1];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the name of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -65,19 +92,39 @@ function CMD_TP(pid, params){
 	}
 
 	local id = args[0];
+		if(isNpc(id)){
+			sendServerMessage(pid, "PANEL", "You can't teleport an NPC.");
+			return;
+		}
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local id_to = args[1];
 
-	if(!isPlayerConnected(id) || !isPlayerConnected(id_to)) sendServerMessage(pid, "PANEL", "One of the Players is not connected to the server.");
-	if(!Players[id].isLogged() || !Players[id_to].isLogged()) sendServerMessage(pid, "PANEL","One of the Players is not logged in.");
+	if(isNpc(id_to)) {
+		if(!NPCs.rawin(id_to)){ sendServerMessage(pid, "PANEL", format("NPC of ID %d does not exist.", id_to)); return;}
 
-	if(id == id_to) sendServerMessage(pid, "PANEL","You can't teleport the same player to himself.");
+		local pos = NPCs[id_to].getPosition();
+		local world = NPCs[id_to].getWorld();
 
-	local pos = Players[id_to].getPosition();
-	local world = Players[id_to].getWorld();
+		if(Players[id].getWorld() != NPCs[id_to].getWorld()) Players[id].setWorld(world);
+			Players[id].setPosition(pos.x, pos.y, pos.z, pos.a);
+			sendServerMessage(id, "PANEL", format("Moderator %s teleported you to NPC %s.", Players[pid].getName(), NPCs[id_to].getName()));
+	} else {
+		if(!Players.rawin(id_to)){ sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id_to)); return;}
 
-	if(Players[id].getWorld() != Players[id_to].getWorld()) Players[id].setWorld(world);
-		Players[id].setPosition(pos.x, pos.y, pos.z, pos.a);
-		sendServerMessage(id, "PANEL", format("Moderator %s teleported you to Player %s.", Players[pid].getName(), Players[id_to].getName()));
+		if(!isPlayerConnected(id) || !isPlayerConnected(id_to)){ sendServerMessage(pid, "PANEL", "One of the Players is not connected to the server."); return;}
+		if(!Players[id].isLogged() || !Players[id_to].isLogged()){ sendServerMessage(pid, "PANEL", "One of the Players is not logged in."); return;}
+		if(id == id_to){ sendServerMessage(pid, "PANEL", "You can't teleport the same player to himself."); return;}
+
+		local pos = Players[id_to].getPosition();
+		local world = Players[id_to].getWorld();
+
+		if(Players[id].getWorld() != Players[id_to].getWorld()) Players[id].setWorld(world);
+			Players[id].setPosition(pos.x, pos.y, pos.z, pos.a);
+			sendServerMessage(id, "PANEL", format("Moderator %s teleported you to Player %s.", Players[pid].getName(), Players[id_to].getName()));
+	}
 }
 registerCommand("tp", CMD_TP, "Teleport one player to another.", perm.MODERATOR);
 
@@ -90,18 +137,38 @@ function CMD_TPALL(pid, params){
 
 	local id = args[0];
 
-	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
-	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
+	if(isNpc(id)) {
+		if(!NPCs.rawin(id)){ sendServerMessage(pid, "PANEL", format("NPC of ID %d does not exist.", id_to)); return;}
 
-	local pos = Players[id].getPosition();
-	local world = Players[id].getWorld();
-	foreach(ppid in Players){
-		if(!Players[ppid].isLogged()) continue;
+		local pos = NPCs[id].getPosition();
+		local world = NPCs[id].getWorld();
 
-		if(Players[ppid].getWorld() != Players[id].getWorld()) Players[ppid].setWorld(world);
-			Players[ppid].setPosition(pos.x, pos.y, pos.z, pos.a);
+		foreach(player in Players){
+			local ppid = player.id;
+			if(!Players[ppid].isLogged()) continue;
 
-			sendServerMessage(ppid, "PANEL", format("Moderator %s teleported you to Player %s.", Players[pid].getName(), Players[id].getName()));
+			if(Players[ppid].getWorld() != NPCs[id].getWorld()) Players[ppid].setWorld(world);
+				Players[ppid].setPosition(pos.x, pos.y, pos.z, pos.a);
+
+				sendServerMessage(ppid, "PANEL", format("Moderator %s teleported you to NPC %s.", Players[pid].getName(), NPCs[id].getName()));
+		}
+	} else {
+		if(!Players.rawin(id)){ sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id_to)); return;}
+
+		if(!isPlayerConnected(id)){ sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id)); return;}
+		if(!Players[id].isLogged()){ sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id)); return;}
+
+		local pos = Players[id].getPosition();
+		local world = Players[id].getWorld();
+		foreach(player in Players){
+			local ppid = player.id;
+			if(!Players[ppid].isLogged()) continue;
+
+			if(Players[ppid].getWorld() != Players[id].getWorld()) Players[ppid].setWorld(world);
+				Players[ppid].setPosition(pos.x, pos.y, pos.z, pos.a);
+
+				sendServerMessage(ppid, "PANEL", format("Moderator %s teleported you to Player %s.", Players[pid].getName(), Players[id].getName()));
+		}
 	}
 }
 registerCommand("tpall", CMD_TPALL, "Teleport all players to another.", perm.MODERATOR);
@@ -115,8 +182,15 @@ function CMD_TPHERE(pid, params){
 
 	local id = args[0];
 
-	if(!isPlayerConnected(id) || !isPlayerConnected(id_to)) sendServerMessage(pid, "PANEL", "One of the Players is not connected to the server.");
-	if(!Players[id].isLogged() || !Players[id_to].isLogged()) sendServerMessage(pid, "PANEL","One of the Players is not logged in.");
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't teleport an NPC.");
+		return;
+	}
+
+	if(!Players.rawin(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id_to)); return;
+
+	if(!isPlayerConnected(id) || !isPlayerConnected(id_to)){ sendServerMessage(pid, "PANEL", "One of the Players is not connected to the server."); return;}
+	if(!Players[id].isLogged() || !Players[id_to].isLogged()){ sendServerMessage(pid, "PANEL","One of the Players is not logged in."); return;}
 
 	local pos = Players[id].getPosition();
 	local world = Players[id].getWorld();
@@ -125,7 +199,21 @@ function CMD_TPHERE(pid, params){
 		Players[id].setPosition(pos.x, pos.y, pos.z, pos.a);
 		sendServerMessage(id, "PANEL", format("Moderator %s teleported you to himself.", Players[pid].getName()));
 }
-registerCommand("tp", CMD_TP, "Teleport one player to yourself.", perm.MODERATOR);
+registerCommand("tphere", CMD_TPHERE, "Teleport one player to yourself.", perm.MODERATOR);
+
+function CMD_VIRTUALWORLD(pid, params){
+	local args = sscanf("d", params);
+	if(!args){
+		sendServerMessage(pid, "PANEL", "Wrong parameters. Use /virtual id");
+		return;
+	}
+
+	local id = args[0];
+
+	Players[pid].setVirtualWorld(id);
+		sendServerMessage(pid, "PANEL", format("You are now in Virtual World %d.", id));
+}
+registerCommand("virtual", CMD_VIRTUALWORLD, "Switch virtual world.", perm.MODERATOR);
 
 function CMD_WORLD(pid, params){
 	local args = sscanf("d", params);
@@ -136,7 +224,10 @@ function CMD_WORLD(pid, params){
 
 	local id = args[0];
 
-	if(id > worlds.len()) sendServerMessage(pid, "PANEL", format("Max. allowed value is %d.", worlds.len()-1));
+	if(id > worlds.len()) {
+		sendServerMessage(pid, "PANEL", format("Max. allowed value is %d.", worlds.len() - 1));
+		return;
+	}
 
 	local world = worlds[id];
 	local pos = world.position;
@@ -163,7 +254,10 @@ function CMD_LOCATION(pid, params){
 
 	local id = args[0];
 
-	if(id > locations.len()) sendServerMessage(pid, "PANEL", format("Max. allowed value is %d.", locations.len()-1));
+	if(id > locations.len()) {
+		sendServerMessage(pid, "PANEL", format("Max. allowed value is %d.", locations.len() - 1));
+		return;
+	}
 
 	local location = locations[id];
 	local pos = location.position;
@@ -189,8 +283,17 @@ function CMD_INSTANCE(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local instance = args[1].toupper();
 	local vis = Players[id].getVisual();
+
+	if(isNpc(id)){
+		sendServerMessage(pid, "PANEL", "You can't change instance of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -213,9 +316,18 @@ function CMD_SCALE(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local x = args[1].tofloat();
 	local y = args[2].tofloat();
 	local z = args[3].tofloat();
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the scale of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -236,7 +348,16 @@ function CMD_SCALERES(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local scale = Players[id].getScale();
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the scale of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -259,7 +380,7 @@ function CMD_POS(pid, params){
 	sendServerMessage(pid, "PANEL", format("Position (%s: x:%f y:%f z:%f a:%f) was created.", name, pos.x, pos.y, pos.z, pos.a));
 	print(format("Position %s: x:%f y:%f z:%f a:%f", name, pos.x, pos.y, pos.z, pos.a))
 
-	local myfile = io.file("pos.txt", "a+");
+	local myfile = io.file("database/pos.txt", "a+");
 	if(myfile.isOpen){
 		myfile.write(format("%s: {x = %f, y = %f, z = %f, a = %f}", name, pos.x, pos.y, pos.z, pos.a) + "\n");
 		myfile.close();
@@ -275,11 +396,20 @@ function CMD_HEAL(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local hp = Players[id].getHealth();
 	local mhp = Players[id].getMaxHealth();
 	local mp = Players[id].getMana();
 	local mmp = Players[id].getMaxMana();
 	local st = Players[id].getStamina();
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the stats of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -303,6 +433,15 @@ function CMD_KILL(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the stats of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -321,13 +460,13 @@ function CMD_TIME(pid, params){
 
 	local hour = args[0];
 	local minute = args[1];
-	local time = Calendar.getTime();
 
 	if(hour > 23 || minute > 59) sendServerMessage(pid, "PANEL", "Max. allowed value is 23:59.");
 	if(hour < 0 || minute < 0) sendServerMessage(pid, "PANEL", "Min. allowed value is 00:00.");
 
-	Calendar.updateTime(minute, hour, time.day, time.month, time.year);
-	sendServerMessage(pid, "SERVER", format("Time was changed to %02d:%02d.", hour, minute));
+	Calendar.hour = hour;
+	Calendar.minute = minute;
+		sendServerMessage(pid, "SERVER", format("Time was changed to %02d:%02d.", hour, minute));
 }
 registerCommand("time", CMD_TIME, "Change server time.", perm.MODERATOR);
 
@@ -339,7 +478,16 @@ function CMD_KICK(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local reason = args[1];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't kick an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -357,8 +505,17 @@ function CMD_BAN(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local duration = args[1];
 	local reason = args[2];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't ban an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -376,8 +533,17 @@ function CMD_JAIL(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local duration = args[1];
 	local reason = args[2];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't jail an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));

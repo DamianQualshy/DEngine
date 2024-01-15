@@ -19,7 +19,7 @@ PlayerRestMessage.bind(function(message){
 	isHeroResting = message.state;
 });
 
-addEventHandler("onKey", function(key){
+addEventHandler("onKeyDown", function(key){
 	if(!isHeroResting) return;
 
 	switch(key){

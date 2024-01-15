@@ -1,6 +1,8 @@
 <server>
 	<import src="GUI-Framework/gui.xml" />
 
+	<import src="GUI-Extension/gui.xml" />
+
 	<import src="bpackets/meta.xml" />
 
 	<script src="Camera/FreeCam.nut" type="client" />

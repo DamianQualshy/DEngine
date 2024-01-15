@@ -6,7 +6,16 @@ function CMD_PROMOTE(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local class_id = args[1];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't promote an NPC.");
+		return;
+	}
 
 	if(!Players[id].isConnected()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -27,8 +36,17 @@ function CMD_GIVEEXP(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local amount = args[1];
 	local get_exp = Players[id].getExperience();
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't give Experience to an NPC.");
+		return;
+	}
 
 	if(!Players[id].isConnected()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));

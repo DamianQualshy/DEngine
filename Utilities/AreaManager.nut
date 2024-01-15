@@ -3,6 +3,8 @@ class Area
 	name = null
 	world = null
 
+	isChunk = null
+
 	points = null
 
 	minY = null
@@ -13,6 +15,9 @@ class Area
 		name = arg.name
 		points = arg.points
 		world = arg.world.toupper()
+
+		if("isChunk" in arg)
+			isChunk = arg.isChunk
 
 		if ("minY" in arg)
 			minY = arg.minY
@@ -87,9 +92,6 @@ function AreaManager::remove(area)
 
 if (CLIENT_SIDE)
 {
-	addEvent("onEnterZone");
-	addEvent("onExitZone");
-
 	AreaManager.heroAreas <- {}
 
 	function AreaManager::process()
@@ -120,9 +122,6 @@ if (CLIENT_SIDE)
 
 else if (SERVER_SIDE)
 {
-	addEvent("onPlayerEnterZone");
-	addEvent("onPlayerExitZone");
-
 	AreaManager.playersAreas <- []
 
 	for (local pid = 0, end = getMaxSlots(); pid < getMaxSlots(); ++pid)

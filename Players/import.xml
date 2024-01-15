@@ -4,9 +4,22 @@
 	<script src="Login/client.nut" type="client" />
 	<script src="Login/server.nut" type="server" />
 
-	<script src="Growth/hud.nut" type="client" />
+	<script src="HUD/client.nut" type="client" />
+	<script src="HUD/server.nut" type="server" />
+
 	<script src="Growth/client.nut" type="client" />
 	<script src="Growth/server.nut" type="server" />
+
+	<script src="Trading/gui_functions.nut" type="client" />
+
+	<script src="Inventory/client.nut" type="client" />
+	<script src="Inventory/server.nut" type="server" />
+
+	<script src="Trading/client.nut" type="client" />
+	<script src="Trading/server.nut" type="server" />
+
+	<script src="Damage/client.nut" type="client" />
+	<script src="Damage/server.nut" type="server" />
 
 	<script src="Animations.nut" type="client" />
 </server>

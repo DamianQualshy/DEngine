@@ -9,10 +9,12 @@ local excavationBar = GUI.Bar({
 });
 
 local oreDraw = GUI.Draw({
-	position = {x = anx(760), y = any(850)}
+	positionPx = {x = nax(2000), y = nay(8192)}
 	text = "You mined X ore and gained X exp!"
 	font = "FONT_OLD_20_WHITE_HI.TGA"
-});
+})
+local oreDrawPos = {x = nax(2000), y = getResolution().y};
+local tweenAni = null;
 
 local mob_;
 local curr_stm;
@@ -42,9 +44,9 @@ addEventHandler("onMobInteract", function(address, type, from, to){
 						oreDraw.setText(format("You mined %d Ore!", ore));
 					}
 						oreDraw.setVisible(true);
-						setTimer(function(){
-							oreDraw.setVisible(false);
-						}, 5000, 1);
+
+						oreDrawPos.y = nay(8192);
+						tweenAni = Tween(3, oreDrawPos, {x = nax(2000), y = 8100}, Tween.easing.outInCubic);
 			} else {
 				oreDraw.setText("You are too tired to mine.");
 			}
@@ -53,6 +55,20 @@ addEventHandler("onMobInteract", function(address, type, from, to){
 			excavationBar.setValue(0);
 			excavationBar.setVisible(false);
 		}
+	}
+});
+
+addEventHandler("Tween.onEnded", function(tween){
+	if(tween == tweenAni){
+		oreDraw.setVisible(false);
+		oreDrawPos.y = nay(8192);
+	}
+});
+
+local alphaOverflow = false;
+addEventHandler("onRender", function(){
+	if(oreDraw.getVisible()){
+		oreDraw.setPositionPx(oreDrawPos.x, nay(oreDrawPos.y));
 	}
 });
 

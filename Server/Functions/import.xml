@@ -1,0 +1,16 @@
+<server>
+	<script src="Math.nut" type="shared" />
+	<script src="Convert.nut" type="shared" />
+
+	<script src="Checks/server.nut" type="server" />
+	<script src="Checks/client.nut" type="client" />
+
+	<script src="Getters/server.nut" type="server" />
+	<script src="Getters/client.nut" type="client" />
+
+	<script src="Set/server.nut" type="server" />
+	<script src="Set/client.nut" type="client" />
+
+	<script src="Log/server.nut" type="server" />
+	<script src="Log/client.nut" type="client" />
+</server>

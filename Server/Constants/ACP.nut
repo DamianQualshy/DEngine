@@ -1,0 +1,6 @@
+enum perm {
+	PLAYER,
+	LEADER,
+	MODERATOR,
+	ADMIN
+}

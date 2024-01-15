@@ -362,7 +362,7 @@ addEventHandler("onRender", function()
 	})
 })
 
-addEventHandler("onKey", function(key)
+addEventHandler("onKeyDown", function(key)
 {
 	if (chatInputIsOpen())
 	{

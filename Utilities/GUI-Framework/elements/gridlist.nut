@@ -161,12 +161,14 @@ local GridListRow = class
 	id = -1
 	parent = null
 	cells = null
+	metadata = null
 
 	constructor(id, parent)
 	{
 		this.id = id
 		this.parent = parent
 		cells = {}
+		metadata = {}
 	}
 
 	function getVisibleRow()
@@ -174,7 +176,7 @@ local GridListRow = class
 		local scrollValue = parent.scrollbar.range.getValue()
 		if (id >= scrollValue && id < parent.visibleRows.len() + scrollValue)
 			return parent.visibleRows[id - scrollValue]
-		
+
 		return null
 	}
 
@@ -184,7 +186,7 @@ local GridListRow = class
 		local visibleCell = cell.getVisibleCell()
 		if (visibleCell)
 			visibleCell.update(cell)
-			
+
 		cells[column] <- cell
 		return cell
 	}
@@ -247,7 +249,7 @@ class GUI.GridListVisibleCell extends GUI.Button
 		if (gridlist.getVisible() && !getVisible())
 		{
 			setVisible(true)
-			
+
 			if (gridlist.scrollbar.getVisible())
 				gridlist.scrollbar.top()
 		}
@@ -300,7 +302,7 @@ class GUI.GridListColumn extends GUI.Alignment
 		else
 			_widthPx = 0
 	}
-	
+
 	function getWidthPx()
 	{
 		return _widthPx
@@ -430,21 +432,21 @@ class GUI.GridList extends GUIGridListClasses
 	{
 		local positionPx = getPositionPx()
 		GUI.Texture.setPositionPx.call(this, x, y)
-		
+
 		local offsetXPx = x - positionPx.x
 		local offsetYPx = y - positionPx.y
 
-        local scrollbarPositionPx = scrollbar.getPositionPx()
-        scrollbar.setPositionPx(scrollbarPositionPx.x + offsetXPx, scrollbarPositionPx.y + offsetYPx)
+		local scrollbarPositionPx = scrollbar.getPositionPx()
+		scrollbar.setPositionPx(scrollbarPositionPx.x + offsetXPx, scrollbarPositionPx.y + offsetYPx)
 
-        foreach (visibleRow in visibleRows)
-        {
+		foreach (visibleRow in visibleRows)
+		{
 			foreach (visibleCell in visibleRow.cells)
 			{
 				local visibleCellPositionPx = visibleCell.getPositionPx()
 				visibleCell.setPositionPx(visibleCellPositionPx.x + offsetXPx, visibleCellPositionPx.y + offsetYPx)
 			}
-        }
+		}
 	}
 
 	function setSizePx(width, height)
@@ -541,7 +543,7 @@ class GUI.GridList extends GUIGridListClasses
 			case ScrollbarVisibilityMode.Always:
 				scrollbar.setVisible(visible)
 				break
-				
+
 			case ScrollbarVisibilityMode.Needed:
 				scrollbar.setVisible(visible && visibleRows.len() < rows.len())
 				break
@@ -564,7 +566,7 @@ class GUI.GridList extends GUIGridListClasses
 				visibleCell.setVisible(toggle && visibleCell.getDataCell())
 			}
 		}
-			
+
 		updateScrollbarVisibility()
 	}
 
@@ -594,7 +596,7 @@ class GUI.GridList extends GUIGridListClasses
 
 	function removeColumn(colId)
 	{
-		//	Remove data cells:
+		// Remove data cells:
 		local column = columns[colId]
 
 		for (local rowId = 0, end = rows.len(); rowId < end; ++rowId)
@@ -605,7 +607,7 @@ class GUI.GridList extends GUIGridListClasses
 			delete rows[rowId].cells[column]
 		}
 
-		//	Remove visible cells:
+		// Remove visible cells:
 		for (local rowId = 0, end = visibleRows.len(); rowId < end; ++rowId)
 		{
 			if (!(column in visibleRows[rowId].cells))
@@ -635,7 +637,7 @@ class GUI.GridList extends GUIGridListClasses
 		{
 			if (columnsLen <= colId)
 				break
-				
+
 			local column = columns[colId]
 			row.cells[column] <- GridListCell(row, column, arg)
 		}
@@ -646,15 +648,15 @@ class GUI.GridList extends GUIGridListClasses
 			scrollbar.range.setMaximum(max)
 
 			if (!scrollbar.getVisible() && visible && _scrollbarVisibilityMode == ScrollbarVisibilityMode.Needed)
-				scrollbar.setVisible(true) 
+				scrollbar.setVisible(true)
 		}
-		
+
 		if (rowId >= scrollbar.range.getValue() + visibleRows.len())
 			return row
 
 		local visibleRow = row.getVisibleRow()
 		local begin = visibleRow ? visibleRow.id : 0
-		
+
 		for (local i = rowId + 1, end = rows.len(); i < end; ++i)
 			++rows[i].id
 
@@ -688,7 +690,7 @@ class GUI.GridList extends GUIGridListClasses
 			--rows[i].id
 
 		rows.remove(rowId)
-	
+
 		local oldMax = scrollbar.range.getMaximum()
 		if (oldMax > 0)
 		{
@@ -726,6 +728,9 @@ class GUI.GridList extends GUIGridListClasses
 	function sort(func)
 	{
 		rows.sort(func)
+		foreach (i, row in rows)
+			row.id = i
+
 		refreshList()
 	}
 
@@ -741,7 +746,7 @@ class GUI.GridList extends GUIGridListClasses
 		local marginPx = getMarginPx()
 		local rowsLen = rows.len()
 		local visibleRowsLen = (getSizePx().height - marginPx.top - marginPx.bottom) / (_rowHeightPx + _rowSpacingPx)
-	
+
 		_visibleRowsCount = visibleRowsLen <= rowsLen ? visibleRowsLen : rowsLen
 
 		// Insert visibleRows loop:
@@ -794,7 +799,7 @@ class GUI.GridList extends GUIGridListClasses
 					visibleCell.setDisabled(disabled)
 					visibleRow.cells[column] <- visibleCell
 				}
-					
+
 				visibleCell.setPositionPx(rowPositionXPx, rowPositionYPx)
 				visibleCell.setSizePx(columnWidthPx, _rowHeightPx)
 				rowPositionYPx += rowFullSizePx

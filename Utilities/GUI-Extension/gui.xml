@@ -1,0 +1,3 @@
+<server>
+	<script src="elements/CellList.nut" type="client" />
+</server>

@@ -319,16 +319,12 @@ class GUI.Input extends GUIInputClasses
 		callEvent("GUI.onInputRemoveLetter", this, _text)
 	}
 
-	function addLetter(key)
+	function addLetter(letter)
 	{
 		if(_text.len() >= maxLetters)
 			return
 
 		if (getDisabled())
-			return
-
-		local letter = getKeyLetter(key)
-		if(!letter)
 			return
 
 		if(_type == Input.Numbers)
@@ -381,17 +377,23 @@ class GUI.Input extends GUIInputClasses
 		setActive(true)
 	}
 
-	static function onKey(key)
+	static function onKeyDown(key)
 	{
 		if (!ref.activeInput)
 			return
 
 		cancelEvent()
+	}
 
-		if(key == KEY_BACK)
+	static function onKeyInput(key, letter)
+	{
+		if (!ref.activeInput)
+			return
+
+		if (letter == '\b')
 			ref.activeInput.removeLetter()
-		else
-			ref.activeInput.addLetter(key)
+		else if (letter >= 32)
+			ref.activeInput.addLetter(letter.tochar())
 	}
 
 	static function onMouseClick(button)
@@ -414,5 +416,6 @@ class GUI.Input extends GUIInputClasses
 	}
 }
 
-addEventHandler("onKey", GUI.Input.onKey)
+addEventHandler("onKeyDown", GUI.Input.onKeyDown)
+addEventHandler("onKeyInput", GUI.Input.onKeyInput)
 addEventHandler("onMouseClick", GUI.Input.onMouseClick.bindenv(GUI.Input))

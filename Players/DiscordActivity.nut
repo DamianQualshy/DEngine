@@ -13,22 +13,19 @@ function updateDiscordState(stringFormat){
 }
 
 addEventHandler("onEnterZone", function(area){
-	updateDiscordState(format("%s (%s)", getPlayerName(heroId), area.name));
+	if(!area.isChunk) return;
+	if(!isRemoteNpc(heroId)) updateDiscordState(format("%s (%s)", getPlayerName(heroId), area.name));
 });
 
 addEventHandler("onExitZone", function(area){
-	updateDiscordState(format("%s (%s)", getPlayerName(heroId), "Wilderness"));
+	if(!area.isChunk) return;
+	if(!isRemoteNpc(heroId)) updateDiscordState(format("%s (%s)", getPlayerName(heroId), "Wilderness"));
 });
 
 addEventHandler("onPlayerSpawn", function(heroId){
-	updateDiscordState(format("%s (%s)", getPlayerName(heroId), "Wilderness"));
+	if(!isRemoteNpc(heroId)) updateDiscordState(format("%s (%s)", getPlayerName(heroId), "Wilderness"));
 });
 
-addEventHandler("onPacket", function(packet){
-	local packetId = packet.readUInt8();
-	switch(packetId){
-		case packets.login_success:
-			updateDiscordState(format("%s (%s)", getPlayerName(heroId), "Wilderness"));
-		break;
-	}
+PlayerLoginSuccessMessage.bind(function(message){
+	updateDiscordState(format("%s (%s)", getPlayerName(heroId), "Wilderness"));
 });

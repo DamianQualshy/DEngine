@@ -34,17 +34,19 @@ function sendServerMessage(id, type, text){
 			sendMessageToPlayer(id, serverChatTypes[type].color.r, serverChatTypes[type].color.g, serverChatTypes[type].color.b, message);
 		}
 		if(type == "GOOC" || type == "GDO" || type == "SERVER"){
+			if(type != "SERVER") callEvent("onPlayerSendsMessage", id);
 			sendMessageToAll(serverChatTypes[type].color.r, serverChatTypes[type].color.g, serverChatTypes[type].color.b, message);
 		}
 		if(type == "GMSG"){
 			for(local i = 0, end = getMaxSlots(); i < end; ++i){
-				if(!Players.rawin(i)) break;
+				if(!Players.rawin(i)) continue;
 				if(!Players[i].isLogged()) continue;
 
 				if(Players[i].getPermissions() >= perm.MODERATOR){
 					sendMessageToPlayer(i, serverChatTypes[type].color.r, serverChatTypes[type].color.g, serverChatTypes[type].color.b, message);
 				}
 			}
+			callEvent("onPlayerSendsMessage", id);
 		}
 	}
 }
@@ -85,6 +87,10 @@ addEventHandler("onPlayerCommand", function(id, cmd, params){
 		case "msg":
 				if(params == "") break;
 			if(checkPermissions(id, perm.MODERATOR)) sendServerMessage(id, "GMSG", params);
+		break;
+
+		default:
+			return;
 		break;
 	}
 });

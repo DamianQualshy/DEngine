@@ -36,7 +36,7 @@ function sendChatMessage(id, type, text){
 		local message = rpChatTypes[type].parseFormat(id, text);
 		for(local i = 0, end = getMaxSlots(); i < end; ++i){
 
-				if(!Players.rawin(i)) break;
+				if(!Players.rawin(i)) continue;
 				if(!Players[i].isLogged()) continue;
 				if(Players[i].getWorld() != Players[id].getWorld()) continue;
 
@@ -48,6 +48,7 @@ function sendChatMessage(id, type, text){
 				sendMessageToAdmin(id, serverChatTypes[type].color.r, serverChatTypes[type].color.g, serverChatTypes[type].color.b, message);
 			}
 		}
+		callEvent("onPlayerSendsMessage", id);
 	}
 }
 
@@ -90,7 +91,7 @@ addEventHandler("onPlayerMessage", function(id, text){
 		break;
 
 		default:
-				if(text == "") break;
+				if(msgType == "" || msgType == " ") break;
 			sendChatMessage(id, "IC", text);
 		break;
 	}
@@ -128,6 +129,10 @@ addEventHandler("onPlayerCommand", function(id, cmd, params){
 		case "sh":
 				if(params == "") break;
 			sendChatMessage(id, "SH", params);
+		break;
+
+		default:
+			return;
 		break;
 	}
 });

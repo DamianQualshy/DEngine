@@ -18,14 +18,6 @@ anims[animations.ACTIVE] <- [
 		}
 	},
 	{
-		instance = "S_LOOKOUT",
-		name = "Look around",
-		model = null,
-		condition = function(id){
-			return true;
-		}
-	},
-	{
 		instance = "T_STAND_2_WASH",
 		name = "Wash yourself",
 		model = null,
@@ -439,6 +431,14 @@ anims[animations.REACTION] <- [
 ];
 
 anims[animations.IDLE] <- [
+	{
+		instance = "S_LOOKOUT",
+		name = "Look around",
+		model = null,
+		condition = function(id){
+			return true;
+		}
+	},
 	{
 		instance = "T_STAND_2_SIT",
 		name = "Sit",

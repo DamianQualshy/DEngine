@@ -21,7 +21,7 @@ class GUI.ScrollBar extends GUI.Base
 	range = null
 	decreaseButton = null
 	increaseButton = null
-
+	
 	constructor(arg = null)
 	{
 		base.constructor(arg)
@@ -269,7 +269,7 @@ class GUI.ScrollBar extends GUI.Base
 		{
 			case Orientation.Horizontal:
 				return ref.activeHorizonalScrollBar
-
+			
 			case Orientation.Vertical:
 				return ref.activeVerticalScrollBar
 
@@ -353,7 +353,7 @@ class GUI.ScrollBar extends GUI.Base
 		scrollBar.range.setValue(scrollBar.range.getValue() + activeScrollBarButtonDirection * scrollBar.range._step)
 	}
 
-	static function onKey(key)
+	static function onKeyDown(key)
 	{
 		local horizontalKey = 0
 		local verticalKey = 0
@@ -410,5 +410,5 @@ class GUI.ScrollBar extends GUI.Base
 
 addEventHandler("onMouseRelease", GUI.ScrollBar.onMouseRelease)
 addEventHandler("onRender", GUI.ScrollBar.onRender)
-addEventHandler("onKey", GUI.ScrollBar.onKey)
+addEventHandler("onKeyDown", GUI.ScrollBar.onKeyDown)
 addEventHandler("onMouseWheel", GUI.ScrollBar.onMouseWheel)

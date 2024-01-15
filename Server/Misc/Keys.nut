@@ -6,6 +6,7 @@ disabled_game_keys[KEY_C] = true;
 disabled_game_keys[KEY_N] = true;
 disabled_game_keys[KEY_L] = true;
 disabled_game_keys[KEY_M] = true;
+disabled_game_keys[KEY_TAB] = true;
 
 local coordinates = GUI.Draw({
 	position = {x = 1000, y = 2000},
@@ -14,7 +15,7 @@ local coordinates = GUI.Draw({
 });
 coordinates.setVisible(true);
 
-addEventHandler("onKey", function(key){
+addEventHandler("onKeyDown", function(key){
 	if(chatInputIsOpen()) return;
 
 	if(key in disabled_game_keys && disabled_game_keys[key]){

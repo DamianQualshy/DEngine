@@ -1,0 +1,2 @@
+addEvent("onEnterZone");
+addEvent("onExitZone");

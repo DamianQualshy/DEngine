@@ -194,7 +194,7 @@ function PlayerList::setVisible(visible)
 		header.draw.visible = visible
 
 	foreach (visibleRow in visibleRows)
-		visibleRow.setVisible(visible) 
+		visibleRow.setVisible(visible)
 }
 
 function PlayerList::refresh(value)
@@ -206,7 +206,7 @@ function PlayerList::refresh(value)
 function PlayerList::insert(pid)
 {
 	local dataRow = PlayerListDataRow(pid, getPlayerName(pid), getPlayerPing(pid))
-	
+
 	local playerColor = heroId != pid ? getPlayerColor(pid) : {r = 255, g = 150, b = 0}
 	dataRow.setColor(playerColor.r, playerColor.g, playerColor.b)
 
@@ -230,7 +230,7 @@ function PlayerList::remove(pid)
 
 	if (dataRowIdx == dataRows.len() - 1)
 		_updateBegin(begin - 1)
-	
+
 	if (isInView)
 		_updateVisibleRows()
 }
@@ -299,11 +299,13 @@ addEventHandler("onInit", function()
 
 addEventHandler("onPlayerCreate", function(pid)
 {
+	if(isRemoteNpc(pid)) return;
 	PlayerList.insert(pid)
 })
 
 addEventHandler("onPlayerDestroy", function(pid)
 {
+	if(isRemoteNpc(pid)) return;
 	PlayerList.remove(pid)
 })
 
@@ -340,7 +342,7 @@ addEventHandler("onPlayerChangeColor", function(pid, r, g, b)
 		PlayerList.visibleRows[dataRowIdx - PlayerList.begin].setColor(r, g, b)
 })
 
-addEventHandler("onKey", function(key)
+addEventHandler("onKeyDown", function(key)
 {
 	switch (key)
 	{

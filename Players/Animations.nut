@@ -26,8 +26,6 @@ local animGUI = {
 	})
 }
 
-//animGUI.grid.setMarginPx(36, 36, 36, 36)
-
 local aniColumnName = animGUI.grid.addColumn({
 	widthPx = nax(1660)
 	align = Align.Center
@@ -59,9 +57,8 @@ function toggleAnim(toggle){
 		animCollection.setVisible(toggle);
 
 		setCursorVisible(toggle);
+		setCursorPosition(4096, 4096);
 		disableControls(toggle);
-
-		//Camera.movementEnabled = !toggle;
 
 		if(toggle == true){
 			refreshGrid(0);
@@ -70,12 +67,11 @@ function toggleAnim(toggle){
 }
 
 addEventHandler("GUI.onClick", function(self){
-	if(animGUIvisible){
+	if(!isGUIOpened(guiCheck.anim)){
 		if(self instanceof GUI.GridListVisibleCell){
 			if(anims[animGUI.column][self.parent.id].condition(heroId)){
 				stopAni(heroId);
 				playAni(heroId, anims[animGUI.column][self.parent.id].instance);
-				//Camera.setTargetPlayer(heroId);
 			}
 		}
 		if(self instanceof GUI.Button){
@@ -88,7 +84,7 @@ addEventHandler("GUI.onClick", function(self){
 	}
 });
 
-addEventHandler("onKey", function(key){
+addEventHandler("onKeyDown", function(key){
 	switch(key){
 		case KEY_F10:
 			toggleAnim(!animGUIvisible);

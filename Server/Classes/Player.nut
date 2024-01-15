@@ -1,15 +1,17 @@
 local _giveItem = giveItem;
 local _removeItem = removeItem;
 local _equipItem = equipItem;
+local _unequipItem = unequipItem;
+local _useItem = useItem;
 
 Players <- {};
 class Player {
 	id = -1;
+	db_id = -1;
 
 	login = "";
 	password = "";
 	serial = "";
-	uid = "";
 
 	permissions = perm.PLAYER;
 	color = {r = 0, g = 0, b = 0};
@@ -65,7 +67,7 @@ class Player {
 	world = "NEWWORLD\\NEWWORLD.ZEN";
 	virtual_world = virtualworlds.VOID;
 
-	items = {};
+	inventory = {};
 
 	logged = false;
 	afk = false;
@@ -85,90 +87,87 @@ class Player {
 		this.id = id;
 
 		Players[this.id] <- this;
+		this.inventory = Inventory(id);
+	}
+
+	function setDatabaseID(_id){
+		this.db_id = _id;
+	}
+	function getDatabaseID(){
+		return this.db_id;
 	}
 
 	function setLogin(login){
-		this.login = login;
+		this.login = convert(login, "string");
 	}
 	function getLogin(){
 		return this.login;
 	}
 
 	function setPassword(pass){
-		this.password = pass;
+		this.password = convert(pass, "string");
 	}
 	function getPassword(){
 		return this.password;
 	}
 
 	function setSerial(serial){
-		this.serial = serial;
+		this.serial = convert(serial, "string");
 	}
 	function getSerial(){
 		return this.serial;
 	}
 
-	function setUID(uid){
-		this.uid = uid;
-	}
-	function getUID(){
-		return this.uid;
-	}
-
 	function setPermissions(perms){
-		this.permissions = perms;
+		this.permissions = convert(perms, "integer");
 	}
 	function getPermissions(){
 		return this.permissions;
 	}
 
 	function setColor(r, g, b){
-		setPlayerColor(this.id, r, g, b);
+		this.color.r = convert(r, "integer");
+		this.color.g = convert(g, "integer");
+		this.color.b = convert(b, "integer");
 
-		this.color.r = r;
-		this.color.g = g;
-		this.color.b = b;
+		setPlayerColor(this.id, this.color.r, this.color.g, this.color.b);
 	}
 	function setColorHex(hex){
-		hex = hexToRgb(hex);
+		hex = hexToRgb(convert(hex, "string"));
 
 		this.color.r = hex.r;
 		this.color.g = hex.g;
 		this.color.b = hex.b;
 
-		setPlayerColor(this.id, hex.r, hex.g, hex.b);
+		setPlayerColor(this.id, this.color.r, this.color.g, this.color.b);
 	}
 	function getColor(){
 		return this.color;
 	}
 	function getColorHex(){
-		local rgb = this.color;
-		local hex = rgbToHex(rgb.r, rgb.g, rgb.b);
-
-		return hex;
+		return rgbToHex(this.color.r, this.color.g, this.color.b);
 	}
 
 	function setName(name){
-		setPlayerName(this.id, name);
+		this.name = convert(name, "string");
 
-		this.name = name;
+		setPlayerName(this.id, this.name);
 	}
 	function getName(){
 		return this.name;
 	}
 
 	function setDescription(desc){
-		this.description = desc;
+		this.description = convert(desc, "string");
 	}
 	function getDescription(){
 		return this.description;
 	}
 
 	function setInstance(instance){
-		setPlayerInstance(this.id, instance);
+		this.instance = convert(instance, "string");
 
-		this.instance = instance;
-
+		setPlayerInstance(this.id, this.instance);
 		callEvent("onPlayerUpdate", this.id, statupdate.instance);
 	}
 	function getInstance(){
@@ -176,6 +175,8 @@ class Player {
 	}
 
 	function promote(class_id){
+		class_id = convert(class_id, "integer");
+
 		if(class_id <= classes.len() && class_id >= 0){
 			classes[class_id].func(this.id);
 
@@ -190,7 +191,7 @@ class Player {
 	}
 
 	function setLevel(level){
-		this.level = level;
+		this.level = convert(level, "integer");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.level);
 	}
@@ -199,7 +200,7 @@ class Player {
 	}
 
 	function setExperience(experience){
-		this.experience = experience;
+		this.experience = convert(experience, "integer");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.experience);
 	}
@@ -208,7 +209,7 @@ class Player {
 	}
 
 	function setLearnPoints(learnpoints){
-		this.learnpoints = learnpoints;
+		this.learnpoints = convert(learnpoints, "integer");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.learnpoints);
 	}
@@ -217,7 +218,7 @@ class Player {
 	}
 
 	function setGuild(guild){
-		this.guild = guild;
+		this.guild = convert(guild, "string");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.guildname);
 	}
@@ -226,56 +227,55 @@ class Player {
 	}
 
 	function setHealth(health){
-		setPlayerHealth(this.id, health);
+		this.health = convert(health, "integer");
 
-		this.health = health;
-
+		setPlayerHealth(this.id, this.health);
 		callEvent("onPlayerUpdate", this.id, statupdate.health);
 	}
 	function getHealth(){
 		return this.health;
 	}
 	function setMaxHealth(max_health){
-		setPlayerMaxHealth(this.id, max_health);
+		this.max_health = convert(max_health, "integer");
 
-		this.max_health = max_health;
-
+		setPlayerMaxHealth(this.id, this.max_health);
 		callEvent("onPlayerUpdate", this.id, statupdate.max_health);
 	}
 	function getMaxHealth(){
 		return this.max_health;
 	}
 	function restoreHealth(amount){
+		amount = convert(amount, "integer");
+
 		local restore = this.health + amount;
 		if(restore <= this.max_health){
 			this.setHealth(restore);
 		} else {
 			this.setHealth(this.max_health);
 		}
-		print(restore);
 	}
 
 	function setMana(mana){
-		setPlayerMana(this.id, mana);
+		this.mana = convert(mana, "integer");
 
-		this.mana = mana;
-
+		setPlayerMana(this.id, this.mana);
 		callEvent("onPlayerUpdate", this.id, statupdate.mana);
 	}
 	function getMana(){
 		return this.mana;
 	}
 	function setMaxMana(max_mana){
-		setPlayerMaxMana(this.id, max_mana);
+		this.max_mana = convert(max_mana, "integer");
 
-		this.max_mana = max_mana;
-
+		setPlayerMaxMana(this.id, this.max_mana);
 		callEvent("onPlayerUpdate", this.id, statupdate.max_mana);
 	}
 	function getMaxMana(){
 		return this.max_mana;
 	}
 	function restoreMana(amount){
+		amount = convert(amount, "integer");
+
 		local restore = this.mana + amount;
 		if(restore <= this.max_mana){
 			setPlayerMana(this.id, this.mana);
@@ -287,10 +287,9 @@ class Player {
 	}
 
 	function setStrength(strength){
-		setPlayerStrength(this.id, strength);
+		this.strength = convert(strength, "integer");
 
-		this.strength = strength;
-
+		setPlayerStrength(this.id, this.strength);
 		callEvent("onPlayerUpdate", this.id, statupdate.strength);
 	}
 	function getStrength(){
@@ -298,10 +297,9 @@ class Player {
 	}
 
 	function setDexterity(dexterity){
-		setPlayerDexterity(this.id, dexterity);
+		this.dexterity = convert(dexterity, "integer");
 
-		this.dexterity = dexterity;
-
+		setPlayerDexterity(this.id, this.dexterity);
 		callEvent("onPlayerUpdate", this.id, statupdate.dexterity);
 	}
 	function getDexterity(){
@@ -309,12 +307,12 @@ class Player {
 	}
 
 	function setOneHandSkill(onehand){
+		onehand = convert(onehand, "integer");
+
 		if(onehand > 100) onehand = 100;
-
-		setPlayerSkillWeapon(this.id, WEAPON_1H, onehand);
-
 		this.onehand = onehand;
 
+		setPlayerSkillWeapon(this.id, WEAPON_1H, onehand);
 		callEvent("onPlayerUpdate", this.id, statupdate.onehand);
 	}
 	function getOneHandSkill(){
@@ -322,12 +320,12 @@ class Player {
 	}
 
 	function setTwoHandSkill(twohand){
+		twohand = convert(twohand, "integer");
+
 		if(twohand > 100) twohand = 100;
-
-		setPlayerSkillWeapon(this.id, WEAPON_2H, twohand);
-
 		this.twohand = twohand;
 
+		setPlayerSkillWeapon(this.id, WEAPON_2H, this.twohand);
 		callEvent("onPlayerUpdate", this.id, statupdate.twohand);
 	}
 	function getTwoHandSkill(){
@@ -335,12 +333,12 @@ class Player {
 	}
 
 	function setBowSkill(bow){
+		bow = convert(bow, "integer");
+
 		if(bow > 100) bow = 100;
-
-		setPlayerSkillWeapon(this.id, WEAPON_BOW, bow);
-
 		this.bow = bow;
 
+		setPlayerSkillWeapon(this.id, WEAPON_BOW, this.bow);
 		callEvent("onPlayerUpdate", this.id, statupdate.bow);
 	}
 	function getBowSkill(){
@@ -348,12 +346,12 @@ class Player {
 	}
 
 	function setCrossbowSkill(crossbow){
+		crossbow = convert(crossbow, "integer");
+
 		if(crossbow > 100) crossbow= 100;
-
-		setPlayerSkillWeapon(this.id, WEAPON_CBOW, crossbow);
-
 		this.crossbow = crossbow;
 
+		setPlayerSkillWeapon(this.id, WEAPON_CBOW, this.crossbow);
 		callEvent("onPlayerUpdate", this.id, statupdate.cbow);
 	}
 	function getCrossbowSkill(){
@@ -361,12 +359,12 @@ class Player {
 	}
 
 	function setMagicCircle(magic_circle){
+		magic_circle = convert(magic_circle, "integer");
+
 		if(magic_circle > 7) magic_circle = 7;
-
-		setPlayerMagicLevel(this.id, magic_circle);
-
 		this.magic_circle = magic_circle;
 
+		setPlayerMagicLevel(this.id, this.magic_circle);
 		callEvent("onPlayerUpdate", this.id, statupdate.magic_circle);
 	}
 	function getMagicCircle(){
@@ -374,13 +372,15 @@ class Player {
 	}
 
 	function setSneakSkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
 			setPlayerTalent(this.id, TALENT_SNEAK, false);
 		} else setPlayerTalent(this.id, TALENT_SNEAK, true);
 
-		this.sneak = sneak;
+		this.sneak = level;
 
 		callEvent("onPlayerUpdate", this.id, statupdate.sneaking);
 	}
@@ -389,6 +389,8 @@ class Player {
 	}
 
 	function setPicklockSkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
@@ -404,6 +406,8 @@ class Player {
 	}
 
 	function setPickpocketSkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
@@ -419,6 +423,8 @@ class Player {
 	}
 
 	function setRuneSkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
@@ -434,6 +440,8 @@ class Player {
 	}
 
 	function setAlchemySkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
@@ -449,6 +457,8 @@ class Player {
 	}
 
 	function setSmithSkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
@@ -464,6 +474,8 @@ class Player {
 	}
 
 	function setTrophySkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 0){
@@ -479,6 +491,8 @@ class Player {
 	}
 
 	function setAcrobaticSkill(level){
+		level = convert(level, "integer");
+
 		if(level > 5) level = 5;
 
 		if(level == 5){
@@ -494,6 +508,10 @@ class Player {
 	}
 
 	function setProfession(profession){
+		profession = convert(profession, "string");
+
+		if(!prof.rawin(profession)) profession = prof.NONE;
+
 		this.profession = profession;
 	}
 	function getProfession(){
@@ -503,7 +521,7 @@ class Player {
 	}
 
 	function setProfessionLevel(level){
-		this.profession_level = level;
+		this.profession_level = convert(level, "integer");
 	}
 	function getProfessionLevel(){
 		return this.profession_level;
@@ -512,7 +530,7 @@ class Player {
 	}
 
 	function setProfessionExp(exp){
-		this.profession_exp = exp;
+		this.profession_exp = convert(exp, "integer");
 	}
 	function getProfessionExp(){
 		return this.profession_exp;
@@ -521,7 +539,7 @@ class Player {
 	}
 
 	function setMiningSkill(skill){
-		this.mining = skill;
+		this.mining = convert(skill, "integer");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.mining);
 	}
@@ -530,7 +548,7 @@ class Player {
 	}
 
 	function setHuntingSkill(skill){
-		this.hunting = skill;
+		this.hunting = convert(skill, "integer");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.hunting);
 	}
@@ -539,7 +557,7 @@ class Player {
 	}
 
 	function setHerbalismSkill(skill){
-		this.herbalism = skill;
+		this.herbalism = convert(skill, "integer");
 
 		callEvent("onPlayerUpdate", this.id, statupdate.herbalism);
 	}
@@ -548,8 +566,9 @@ class Player {
 	}
 
 	function setStamina(stamina){
-		if(stamina > 100) stamina = 100;
+		stamina = convert(stamina, "integer");
 
+		if(stamina > 100) stamina = 100;
 		this.stamina = stamina;
 
 		callEvent("onPlayerUpdate", this.id, statupdate.stamina);
@@ -558,6 +577,8 @@ class Player {
 		return this.stamina;
 	}
 	function restoreStamina(amount){
+		amount = convert(amount, "integer");
+
 		local restore = this.stamina + amount;
 		if(restore <= 100){
 			this.stamina = restore;
@@ -567,39 +588,34 @@ class Player {
 	}
 
 	function setVisual(bodyModel, bodyTexture, headModel, headTexture){
-		setPlayerVisual(this.id, bodyModel, bodyTexture, headModel, headTexture);
+		this.visual.bm = convert(bodyModel, "string");
+		this.visual.bt = convert(bodyTexture, "integer");
+		this.visual.hm = convert(headModel, "string");
+		this.visual.ht = convert(headTexture, "integer");
 
-		this.visual.bm = bodyModel;
-		this.visual.bt = bodyTexture;
-		this.visual.hm = headModel;
-		this.visual.ht = headTexture;
+		setPlayerVisual(this.id, this.visual.bm, this.visual.bt, this.visual.hm, this.visual.ht);
 	}
 	function getVisual(){
 		return this.visual;
 	}
 
 	function setScale(x, y, z, fatness){
-		x = x.tofloat();
-		y = y.tofloat();
-		z = z.tofloat();
-		local f = fatness.tofloat();
+		this.scale.x = convert(x, "float");
+		this.scale.y = convert(y, "float");
+		this.scale.z = convert(z, "float");
+		this.scale.f = convert(fatness, "float");
 
-		setPlayerScale(this.id, x, y, z);
-		setPlayerFatness(this.id, f);
-
-		this.scale.x = x;
-		this.scale.y = y;
-		this.scale.z = z;
-		this.scale.f = f;
+		setPlayerScale(this.id, this.scale.x, this.scale.y, this.scale.z);
+		setPlayerFatness(this.id, this.scale.f);
 	}
 	function getScale(){
 		return this.scale;
 	}
 
 	function setWalkstyle(walk){
-		applyPlayerOverlay(this.id, Mds.id(walk));
+		this.walk = convert(walk, "string");
 
-		this.walk = walk;
+		applyPlayerOverlay(this.id, Mds.id(this.walk));
 	}
 	function getWalkstyle(){
 		return this.walk;
@@ -611,18 +627,13 @@ class Player {
 	}
 
 	function setPosition(x, y, z, angle){
-		x = x.tofloat();
-		y = y.tofloat();
-		z = z.tofloat();
-		local a = angle.tofloat();
+		this.pos.x = convert(x, "float");
+		this.pos.y = convert(y, "float");
+		this.pos.z = convert(z, "float");
+		this.pos.a = convert(angle, "float");
 
-		setPlayerPosition(this.id, x, y, z);
-		setPlayerAngle(this.id, a);
-
-		this.pos.x = x;
-		this.pos.y = y;
-		this.pos.z = z;
-		this.pos.a = a;
+		setPlayerPosition(this.id, this.pos.x, this.pos.y, this.pos.z);
+		setPlayerAngle(this.id, this.pos.a);
 	}
 	function getPosition(){
 		local gamepos = getPlayerPosition(this.id);
@@ -637,11 +648,11 @@ class Player {
 	}
 
 	function setWorld(world){
-		world = world.toupper();
+		world = convert(world, "string").toupper();
 
 		if(this.world != world){
-			setPlayerWorld(this.id, world);
 			this.world = world;
+			setPlayerWorld(this.id, this.world);
 		}
 	}
 	function getWorld(){
@@ -649,9 +660,9 @@ class Player {
 	}
 
 	function setVirtualWorld(virtual_world){
-		setPlayerVirtualWorld(this.id, virtual_world);
+		this.virtual_world = convert(virtual_world, "integer");
 
-		this.virtual_world = virtual_world;
+		setPlayerVirtualWorld(this.id, this.virtual_world);
 	}
 	function getVirtualWorld(){
 		return this.virtual_world;
@@ -659,16 +670,16 @@ class Player {
 
 
 	function setInvisibility(state){
-		setPlayerInvisible(this.id, state);
+		this.invisible = convert(state, "bool");
 
-		this.invisible = state;
+		setPlayerInvisible(this.id, this.invisible);
 	}
 	function isInvisible(){
 		return this.invisible;
 	}
 
 	function setWhitelist(state){
-		this.whitelist = state;
+		this.whitelist = convert(state, "bool");
 	}
 	function isOnWhitelist(){
 		return this.whitelist;
@@ -697,7 +708,6 @@ class Player {
 	function respawn(){
 		spawnPlayer(this.id);
 
-		local visual = this.getVisual();
 		this.setVisual(this.visual.bm, this.visual.bt, this.visual.hm, this.visual.ht);
 
 		local class_pos = classes[this.class_id].spawn;
@@ -717,49 +727,103 @@ class Player {
 	}
 
 	function giveItem(instance, amount){
-		instance = instance.toupper();
+		instance = convert(instance, "string").toupper();
+		amount = convert(amount, "integer");
 
-		if(this.items.rawin(instance)){
-			this.items[instance].amount += amount;
-		} else {
-			this.items[instance] <- {instance = instance, amount = amount, equipped = false};
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
+
+			if(this.inventory.items.rawin(index)){
+				this.inventory.items[index].amount += amount;
+			} else {
+				this.inventory.items[index] <- {instance = instance, amount = amount, equipped = false};
+			}
+
+			callEvent("onGiveItem", this.id, instance, amount);
+			_giveItem(this.id, instance, amount);
 		}
-
-		_giveItem(this.id, Items.id(instance), amount);
 	}
 	function removeItem(instance, amount){
-		instance = instance.toupper();
+		instance = convert(instance, "string").toupper();
+		amount = convert(amount, "integer");
 
-		if(this.items.rawin(instance)){
-			_removeItem(this.id, Items.id(instance), amount);
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
 
-			if(this.items[instance].amount >= 0){
-				this.items[instance].amount -= amount;
-			}
-			if(this.items[instance].amount <= 0){
-				this.items[instance] = null;
+			if(this.inventory.items.rawin(index)){
+				if(this.inventory.items[index].amount >= 0){
+					this.inventory.items[index].amount -= amount;
+				}
+				if(this.inventory.items[index].amount <= 0){
+					this.inventory.items.rawdelete(index);
+				}
+
+				callEvent("onRemoveItem", this.id, instance, amount);
+				_removeItem(this.id, instance, amount);
 			}
 		}
 	}
 	function equipItem(instance){
-		instance = instance.toupper();
+		instance = convert(instance, "string").toupper();
 
-		if(this.items.rawin(instance)){
-			_equipItem(this.id, Items.id(instance));
-			this.items[instance].equipped = true;
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
+
+			if(this.inventory.items.rawin(index)){
+				_equipItem(this.id, instance);
+				this.inventory.items[index].equipped = true;
+			}
+		}
+	}
+	function unequipItem(instance){
+		instance = convert(instance, "string").toupper();
+
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
+
+			if(this.inventory.items.rawin(index)){
+				_unequipItem(this.id, instance);
+				this.inventory.items[index].equipped = false;
+			}
+		}
+	}
+	function useItem(instance){
+		instance = convert(instance, "string").toupper();
+
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
+
+			if(this.inventory.items.rawin(index)){
+				if(this.inventory.items[index].amount > 0){
+					--this.inventory.items[index].amount;
+				}
+				_useItem(this.id, instance);
+				if(this.inventory.items[index].amount <= 0){
+					this.inventory.items.rawdelete(index);
+				}
+			}
 		}
 	}
 	function hasItem(instance){
-		instance = instance.toupper();
+		instance = convert(instance, "string").toupper();
 
-		return this.items.rawin(instance);
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
+
+			return this.inventory.items.rawin(index);
+		}
 	}
 	function isItemEquipped(instance){
-		instance = instance.toupper();
+		if(instance == null) return;
+		instance = convert(instance, "string").toupper();
 
-		if(this.items.rawin(instance)){
-			return this.items[instance].equipped;
-		} else return null;
+		if(doesItemExist(instance)){
+			local index = getItemIndex(instance);
+
+			if(this.inventory.items.rawin(index)){
+				return this.inventory.items[index].equipped;
+			} else return null;
+		}
 	}
 
 	function getNextLevelExp(){
@@ -850,24 +914,47 @@ class Player {
 
 	}
 
+	function characterKill(){
+		local result_items = MySQL.query("SELECT * FROM Player_Items WHERE Player_ID = '" + this.db_id + "'");
+		local result_items_arr = [];
+			if(result_items != null){
+				for(local i = 0, end = MySQL.numRows(result_items); i < end; i++){
+					result_items_arr.append(MySQL.fetchAssoc(result_items));
+				}
+				MySQL.freeResult(result_items);
+
+				local myfile = io.file("database/" + this.name + ".items", "w+");
+					if(myfile.isOpen){
+						for(local i = 0, end = result_items_arr.len(); i < end; i++){
+							myfile.write(format("%s %d", result_items_arr[i].Instance, result_items_arr[i].Amount) + "\n");
+						}
+					myfile.close();
+					}
+			}
+		MySQL.query("DELETE FROM Player_Items WHERE Player_ID = '" + this.db_id + "'");
+
+		this.ck = 1;
+		this.kick(format("%s has drawn his final breath.", this.name));
+	}
+
 
 	function doesExist(){
 		this.setSerial(getPlayerSerial(this.id));
-		this.setUID(getPlayerUID(this.id));
 
 		if(MySQL.isConnectedToDB()){
-			local result = MySQL.query("SELECT * FROM Players WHERE UID = '" + this.uid + "'");
+			local result = MySQL.query("SELECT * FROM Players WHERE Serial = '" + this.serial + "'");
 			if(result != null){
 				local row = MySQL.fetchAssoc(result);
 				MySQL.freeResult(result);
 				if(row != null){
 					this.setLogin(row.Login);
 					this.setPassword(row.Password);
+					this.setDatabaseID(row.ID);
 					return true;
 				}
 			} else return false;
 		} else {
-			local myfile = io.file("database/" + this.uid + ".acc", "r");
+			local myfile = io.file("database/" + this.serial + ".acc", "r");
 			if(myfile.isOpen){
 				this.login = myfile.read(io_type.LINE);
 				this.password = myfile.read(io_type.LINE);
@@ -877,13 +964,37 @@ class Player {
 		}
 	}
 
+	function findPlayerThroughDatabaseID(_id){
+		if(_id == this.getDatabaseID()){
+			return true;
+		} else return false;
+	}
+
+	function getLastHero(){
+		local result_hero = MySQL.query("SELECT * FROM Player_Hero WHERE Player_ID = '" + this.db_id + "'");
+			local result_chars = [];
+			for(local i = 0, end = MySQL.numRows(result_hero); i < end; i++){
+				local char = MySQL.fetchAssoc(result_hero);
+				if(char.CK == 1) {
+					result_chars.append(char);
+				} else {
+					result_chars.append(char);
+					break;
+				}
+			}
+				MySQL.freeResult(result_hero);
+			local lastChar = result_chars.top();
+
+			return lastChar;
+	}
+
 	function save(){
 		if(!this.isLogged()) return;
 
 		if(MySQL.isConnectedToDB()){
-			local result = MySQL.query("SELECT * FROM Players WHERE Login = '" + this.login + "'");
-			local row = MySQL.fetchAssoc(result);
-			MySQL.freeResult(result);
+			local result = MySQL.query("SELECT * FROM Players WHERE Serial = '" + this.serial + "'");
+				local row = MySQL.fetchAssoc(result);
+				MySQL.freeResult(result);
 
 			if(row == null){
 				MySQL.insert("Players", {
@@ -891,14 +1002,21 @@ class Player {
 					Password = this.password,
 
 					Serial = this.serial,
-					UID = this.uid,
 
-					FirstLogin = format("%04d-%02d-%02d %02d:%02d:%02d", date().year, date().month, date().day, date().hour, date().min, date().sec),
-					LastLogin = format("%04d-%02d-%02d %02d:%02d:%02d", date().year, date().month, date().day, date().hour, date().min, date().sec),
+					First_Login = format("%04d-%02d-%02d %02d:%02d:%02d", date().year, date().month + 1, date().day, date().hour, date().min, date().sec),
+					Last_Login = format("%04d-%02d-%02d %02d:%02d:%02d", date().year, date().month + 1, date().day, date().hour, date().min, date().sec),
+
+					First_Serial = this.serial,
 
 					Perms = this.permissions,
 					Color = this.getColorHex(),
 
+					Whitelist = this.whitelist
+				});
+
+				this.setDatabaseID(MySQL.fetchAssoc(MySQL.query("SELECT ID FROM Players WHERE Serial = '" + this.serial + "'")).ID);
+				MySQL.insert("Player_Hero", {
+					Player_ID = this.db_id,
 					Name = this.name,
 					Description = this.description,
 
@@ -907,7 +1025,7 @@ class Player {
 
 					Level = this.level,
 					Experience = this.experience,
-					LearnPoints = this.learnpoints,
+					Learn_Points = this.learnpoints,
 					Guild = this.guild,
 
 					Health = this.health,
@@ -921,7 +1039,7 @@ class Player {
 					Skill_Bow = this.bow,
 					Skill_Crossbow = this.crossbow,
 
-					MagicCircle = this.magic_circle,
+					Magic_Circle = this.magic_circle,
 
 					Talent_Sneak = this.sneak,
 					Talent_Picklock = this.picklock,
@@ -952,7 +1070,7 @@ class Player {
 					Visual_Scale_Z = this.scale.z,
 					Visual_Fatness = this.scale.f,
 
-					WalkStyle = this.walk,
+					Walk_Style = this.walk,
 
 					Position_X = this.getPosition().x,
 					Position_Y = this.getPosition().y,
@@ -963,116 +1081,199 @@ class Player {
 					World_Virtual = this.virtual_world,
 
 					Invisible = this.invisible,
-					Whitelist = this.whitelist,
 					Gained_Exp = this.gained_exp,
 					CK = this.ck
 				});
-				foreach(item in this.items){
+				foreach(item in this.inventory.items){
 					MySQL.insert("Player_Items", {
-						UID = this.uid,
+						Player_ID = db_id,
 						Instance = item.instance,
 						Amount = item.amount,
-						Equipped = item.equipped
+						Equipped = item.equipped,
+						Slot = itemDatabase[getItemIndex(item.instance)].wear
 					});
 				}
 			} else {
-				MySQL.update("Players", "Login", this.login, {
+				MySQL.update("Players", "Serial", this.serial, {
 					Password = this.password,
 
 					Serial = this.serial,
-					UID = this.uid,
 
-					LastLogin = format("%04d-%02d-%02d %02d:%02d:%02d", date().year, date().month, date().day, date().hour, date().min, date().sec),
+					Last_Login = format("%04d-%02d-%02d %02d:%02d:%02d", date().year, date().month + 1, date().day, date().hour, date().min, date().sec),
 
 					Perms = this.permissions,
 					Color = this.getColorHex(),
 
-					Name = this.name,
-					Description = this.description,
-
-					Instance = this.instance,
-					Class_ID = this.class_id,
-
-					Level = this.level,
-					Experience = this.experience,
-					LearnPoints = this.learnpoints,
-					Guild = this.guild,
-
-					Health = this.health,
-					Health_Max = this.max_health,
-					Mana = this.mana,
-					Mana_Max = this.max_mana,
-					Strength = this.strength,
-					Dexterity = this.dexterity,
-					Skill_OneHand = this.onehand,
-					Skill_TwoHand = this.twohand,
-					Skill_Bow = this.bow,
-					Skill_Crossbow = this.crossbow,
-
-					MagicCircle = this.magic_circle,
-
-					Talent_Sneak = this.sneak,
-					Talent_Picklock = this.picklock,
-					Talent_Pickpocket = this.pickpocket,
-					Talent_Runemaking = this.runes,
-					Talent_Alchemy = this.alchemy,
-					Talent_Smith = this.smith,
-					Talent_Trophy = this.trophy,
-					Talent_Acrobatic = this.acrobatic,
-
-					Profession = this.profession,
-					Profession_Level = this.profession_level,
-					Profession_Exp = this.profession_exp,
-
-					Skill_Mining = this.mining,
-					Skill_Hunting = this.hunting,
-					Skill_Herbalism = this.herbalism,
-
-					Stamina = this.stamina,
-
-					Visual_BodyModel = this.visual.bm,
-					Visual_BodyTexture = this.visual.bt,
-					Visual_HeadModel = this.visual.hm,
-					Visual_HeadTexture = this.visual.ht,
-
-					Visual_Scale_X = this.scale.x,
-					Visual_Scale_Y = this.scale.y,
-					Visual_Scale_Z = this.scale.z,
-					Visual_Fatness = this.scale.f,
-
-					WalkStyle = this.walk,
-
-					Position_X = this.getPosition().x,
-					Position_Y = this.getPosition().y,
-					Position_Z = this.getPosition().z,
-					Position_A = this.getPosition().a,
-
-					World = this.world,
-					World_Virtual = this.virtual_world,
-
-					Invisible = this.invisible,
-					Whitelist = this.whitelist,
-					Gained_Exp = this.gained_exp,
-					CK = this.ck
+					Whitelist = this.whitelist
 				});
-				MySQL.query("DELETE FROM Player_Items WHERE UID = '" + this.uid + "'");
-				foreach(item in this.items){
-					MySQL.insert("Player_Items", {
-						UID = this.uid,
-						Instance = item.instance,
-						Amount = item.amount,
-						Equipped = item.equipped
+
+				if(this.getLastHero().CK == 1){
+					MySQL.insert("Player_Hero", {
+						Player_ID = this.db_id,
+						Name = this.name,
+						Description = this.description,
+
+						Instance = this.instance,
+						Class_ID = this.class_id,
+
+						Level = this.level,
+						Experience = this.experience,
+						Learn_Points = this.learnpoints,
+						Guild = this.guild,
+
+						Health = this.health,
+						Health_Max = this.max_health,
+						Mana = this.mana,
+						Mana_Max = this.max_mana,
+						Strength = this.strength,
+						Dexterity = this.dexterity,
+						Skill_OneHand = this.onehand,
+						Skill_TwoHand = this.twohand,
+						Skill_Bow = this.bow,
+						Skill_Crossbow = this.crossbow,
+
+						Magic_Circle = this.magic_circle,
+
+						Talent_Sneak = this.sneak,
+						Talent_Picklock = this.picklock,
+						Talent_Pickpocket = this.pickpocket,
+						Talent_Runemaking = this.runes,
+						Talent_Alchemy = this.alchemy,
+						Talent_Smith = this.smith,
+						Talent_Trophy = this.trophy,
+						Talent_Acrobatic = this.acrobatic,
+
+						Profession = this.profession,
+						Profession_Level = this.profession_level,
+						Profession_Exp = this.profession_exp,
+
+						Skill_Mining = this.mining,
+						Skill_Hunting = this.hunting,
+						Skill_Herbalism = this.herbalism,
+
+						Stamina = this.stamina,
+
+						Visual_BodyModel = this.visual.bm,
+						Visual_BodyTexture = this.visual.bt,
+						Visual_HeadModel = this.visual.hm,
+						Visual_HeadTexture = this.visual.ht,
+
+						Visual_Scale_X = this.scale.x,
+						Visual_Scale_Y = this.scale.y,
+						Visual_Scale_Z = this.scale.z,
+						Visual_Fatness = this.scale.f,
+
+						Walk_Style = this.walk,
+
+						Position_X = this.getPosition().x,
+						Position_Y = this.getPosition().y,
+						Position_Z = this.getPosition().z,
+						Position_A = this.getPosition().a,
+
+						World = this.world,
+						World_Virtual = this.virtual_world,
+
+						Invisible = this.invisible,
+						Gained_Exp = this.gained_exp,
+						CK = this.ck
 					});
+					foreach(item in this.inventory.items){
+						MySQL.insert("Player_Items", {
+							Player_ID = db_id,
+							Instance = item.instance,
+							Amount = item.amount,
+							Equipped = item.equipped,
+							Slot = itemDatabase[getItemIndex(item.instance)].wear
+						});
+					}
+				} else {
+					MySQL.update("Player_Hero", "Player_ID", this.db_id.tostring(), {
+						Name = this.name,
+						Description = this.description,
+
+						Instance = this.instance,
+						Class_ID = this.class_id,
+
+						Level = this.level,
+						Experience = this.experience,
+						Learn_Points = this.learnpoints,
+						Guild = this.guild,
+
+						Health = this.health,
+						Health_Max = this.max_health,
+						Mana = this.mana,
+						Mana_Max = this.max_mana,
+						Strength = this.strength,
+						Dexterity = this.dexterity,
+						Skill_OneHand = this.onehand,
+						Skill_TwoHand = this.twohand,
+						Skill_Bow = this.bow,
+						Skill_Crossbow = this.crossbow,
+
+						Magic_Circle = this.magic_circle,
+
+						Talent_Sneak = this.sneak,
+						Talent_Picklock = this.picklock,
+						Talent_Pickpocket = this.pickpocket,
+						Talent_Runemaking = this.runes,
+						Talent_Alchemy = this.alchemy,
+						Talent_Smith = this.smith,
+						Talent_Trophy = this.trophy,
+						Talent_Acrobatic = this.acrobatic,
+
+						Profession = this.profession,
+						Profession_Level = this.profession_level,
+						Profession_Exp = this.profession_exp,
+
+						Skill_Mining = this.mining,
+						Skill_Hunting = this.hunting,
+						Skill_Herbalism = this.herbalism,
+
+						Stamina = this.stamina,
+
+						Visual_BodyModel = this.visual.bm,
+						Visual_BodyTexture = this.visual.bt,
+						Visual_HeadModel = this.visual.hm,
+						Visual_HeadTexture = this.visual.ht,
+
+						Visual_Scale_X = this.scale.x,
+						Visual_Scale_Y = this.scale.y,
+						Visual_Scale_Z = this.scale.z,
+						Visual_Fatness = this.scale.f,
+
+						Walk_Style = this.walk,
+
+						Position_X = this.getPosition().x,
+						Position_Y = this.getPosition().y,
+						Position_Z = this.getPosition().z,
+						Position_A = this.getPosition().a,
+
+						World = this.world,
+						World_Virtual = this.virtual_world,
+
+						Invisible = this.invisible,
+						Gained_Exp = this.gained_exp,
+						CK = this.ck
+					});
+					MySQL.query("DELETE FROM Player_Items WHERE Player_ID = '" + this.db_id + "'");
+					foreach(item in this.inventory.items){
+						MySQL.insert("Player_Items", {
+							Player_ID = db_id,
+							Instance = item.instance,
+							Amount = item.amount,
+							Equipped = item.equipped,
+							Slot = itemDatabase[getItemIndex(item.instance)].wear
+						});
+					}
 				}
 			}
 		} else {
-			local myfile = io.file("database/" + this.uid + ".acc", "w+");
+			local myfile = io.file("database/" + this.serial + ".acc", "w+");
 
 			if(myfile.isOpen){
 				myfile.write(this.getLogin() + "\n");
 				myfile.write(this.getPassword() + "\n");
 				myfile.write(this.getSerial() + "\n");
-				myfile.write(this.getUID() + "\n");
 				myfile.write(this.getPermissions() + "\n");
 				myfile.write(this.getColor().r + " " + this.getColor().g + " " + this.getColor().b + "\n");
 				myfile.write(this.getName() + "\n");
@@ -1124,132 +1325,135 @@ class Player {
 
 	function load(){
 		if(MySQL.isConnectedToDB()){
-			local result = MySQL.query("SELECT * FROM Players WHERE Login = '" + this.login + "'");
+			local result_player = MySQL.query("SELECT * FROM Players WHERE Serial = '" + this.serial + "'");
 
-			if(result){
-				local row = MySQL.fetchAssoc(result);
-				MySQL.freeResult(result);
+			if(result_player != null){
+				local row_player = MySQL.fetchAssoc(result_player);
+				MySQL.freeResult(result_player);
 
-				if(row != null){
-					this.setPassword(row.Password),
-					this.setPermissions(row.Perms),
+					this.setDatabaseID(row_player.ID);
+					this.setLogin(row_player.Login);
+					this.setPassword(row_player.Password);
+					this.setPermissions(row_player.Perms);
+					this.setColorHex(row_player.Color);
+					this.whitelist = row_player.Whitelist;
 
-					this.setColorHex(row.Color),
+				local row_hero = this.getLastHero();
+					this.setName(row_hero.Name),
+					this.setDescription(row_hero.Description),
 
-					this.setName(row.Name),
-					this.setDescription(row.Description),
+					this.setInstance(row_hero.Instance),
+					this.class_id = row_hero.Class_ID,
 
-					this.setInstance(row.Instance),
-					this.class_id = row.Class_ID,
+					this.setLevel(row_hero.Level),
+					this.setExperience(row_hero.Experience),
+					this.setLearnPoints(row_hero.Learn_Points),
+					this.setGuild(row_hero.Guild),
 
-					this.setLevel(row.Level),
-					this.setExperience(row.Experience),
-					this.setLearnPoints(row.LearnPoints),
-					this.setGuild(row.Guild),
+					this.setHealth(row_hero.Health),
+					this.setMaxHealth(row_hero.Health_Max),
+					this.setMana(row_hero.Mana),
+					this.setMaxMana(row_hero.Mana_Max),
+					this.setStrength(row_hero.Strength),
+					this.setDexterity(row_hero.Dexterity),
+					this.setOneHandSkill(row_hero.Skill_OneHand),
+					this.setTwoHandSkill(row_hero.Skill_TwoHand),
+					this.setBowSkill(row_hero.Skill_Bow),
+					this.setCrossbowSkill(row_hero.Skill_Crossbow),
 
-					this.setHealth(row.Health),
-					this.setMaxHealth(row.Health_Max),
-					this.setMana(row.Mana),
-					this.setMaxMana(row.Mana_Max),
-					this.setStrength(row.Strength),
-					this.setDexterity(row.Dexterity),
-					this.setOneHandSkill(row.Skill_OneHand),
-					this.setTwoHandSkill(row.Skill_TwoHand),
-					this.setBowSkill(row.Skill_Bow),
-					this.setCrossbowSkill(row.Skill_Crossbow),
+					this.setMagicCircle(row_hero.Magic_Circle),
 
-					this.setMagicCircle(row.MagicCircle),
+					this.setSneakSkill(row_hero.Talent_Sneak),
+					this.setPicklockSkill(row_hero.Talent_Picklock),
+					this.setPickpocketSkill(row_hero.Talent_Pickpocket),
+					this.setRuneSkill(row_hero.Talent_Runemaking),
+					this.setAlchemySkill(row_hero.Talent_Alchemy),
+					this.setSmithSkill(row_hero.Talent_Smith),
+					this.setTrophySkill(row_hero.Talent_Trophy),
+					this.setAcrobaticSkill(row_hero.Talent_Acrobatic),
 
-					this.setSneakSkill(row.Talent_Sneak),
-					this.setPicklockSkill(row.Talent_Picklock),
-					this.setPickpocketSkill(row.Talent_Pickpocket),
-					this.setRuneSkill(row.Talent_Runemaking),
-					this.setAlchemySkill(row.Talent_Alchemy),
-					this.setSmithSkill(row.Talent_Smith),
-					this.setTrophySkill(row.Talent_Trophy),
-					this.setAcrobaticSkill(row.Talent_Acrobatic),
+					this.setProfession(row_hero.Profession),
+					this.setProfessionLevel(row_hero.Profession_Level),
+					this.setProfessionExp(row_hero.Profession_Exp),
 
-					this.setProfession(row.Profession),
-					this.setProfessionLevel(row.Profession_Level),
-					this.setProfessionExp(row.Profession_Exp),
+					this.setMiningSkill(row_hero.Skill_Mining),
+					this.setHuntingSkill(row_hero.Skill_Hunting),
+					this.setHerbalismSkill(row_hero.Skill_Herbalism),
 
-					this.setMiningSkill(row.Skill_Mining),
-					this.setHuntingSkill(row.Skill_Hunting),
-					this.setHerbalismSkill(row.Skill_Herbalism),
+					this.setStamina(row_hero.Stamina),
 
-					this.setStamina(row.Stamina),
+					this.setWalkstyle(row_hero.Walk_Style),
+					this.setVisual(row_hero.Visual_BodyModel, row_hero.Visual_BodyTexture, row_hero.Visual_HeadModel, row_hero.Visual_HeadTexture),
+					this.setScale(row_hero.Visual_Scale_X, row_hero.Visual_Scale_Y, row_hero.Visual_Scale_Z, row_hero.Visual_Fatness),
 
-					this.setVisual(row.Visual_BodyModel, row.Visual_BodyTexture, row.Visual_HeadModel, row.Visual_HeadTexture),
+					this.setWorld(row_hero.World),
+					this.setPosition(row_hero.Position_X, row_hero.Position_Y, row_hero.Position_Z, row_hero.Position_A),
 
-					this.setScale(row.Visual_Scale_X, row.Visual_Scale_Y, row.Visual_Scale_Z, row.Visual_Fatness),
+					this.setVirtualWorld(row_hero.World_Virtual),
 
-					this.setPosition(row.Position_X, row.Position_Y, row.Position_Z, row.Position_A),
+					this.invisible = row_hero.Invisible
+					this.gained_exp = row_hero.Gained_Exp,
+					this.ck = row_hero.CK
 
-					this.setWorld(row.World),
-					this.setVirtualWorld(row.World_Virtual),
+				local result_items = MySQL.query("SELECT * FROM Player_Items WHERE Player_ID = '" + this.db_id + "'");
+				local result_items_arr = [];
+					if(result_items != null){
+						for(local i = 0, end = MySQL.numRows(result_items); i < end; i++){
+							result_items_arr.append(MySQL.fetchAssoc(result_items));
+						}
+						MySQL.freeResult(result_items);
+						for(local i = 0, end = result_items_arr.len(); i < end; i++){
+								if(result_items_arr[i] == null) break;
 
-					this.invisible = row.Invisible,
-					this.whitelist = row.Whitelist,
-					this.gained_exp = row.Gained_Exp,
-					this.ck = row.CK
-				}
-			}
-
-			local result_items = MySQL.query("SELECT * FROM Player_Items WHERE UID = '" + this.uid + "'");
-			local result_items_arr = [];
-			for(local i = 0, end = MySQL.numRows(result_items); i < end; i++){
-				result_items_arr.append(MySQL.fetchAssoc(result_items));
-			}
-				MySQL.freeResult(result_items);
-			foreach(item in result_items_arr){
-				this.giveItem(item.Instance, item.Amount);
-				if(item.Equipped == 1) this.equipItem(item.Instance);
+							this.giveItem(result_items_arr[i].Instance, result_items_arr[i].Amount);
+							if(result_items_arr[i].Equipped == 1) this.equipItem(result_items_arr[i].Instance);
+						}
+					}
 			}
 		} else {
-			local myfile = io.file("database/" + this.uid + ".acc", "r");
+			local myfile = io.file("database/" + this.serial + ".acc", "r");
 			if(myfile.isOpen){
 				local login = myfile.read(io_type.LINE);
 				local passwd = myfile.read(io_type.LINE);
 				local serial = myfile.read(io_type.LINE);
-				local uid = myfile.read(io_type.LINE);
-				if(login == this.login && passwd == this.password && serial == this.serial && uid == this.uid){
-					this.setPermissions(myfile.read(io_type.LINE).tointeger())
+				if(login == this.login && passwd == this.password && serial == this.serial){
+					this.setPermissions(myfile.read(io_type.LINE))
 						local color = sscanf("ddd", myfile.read(io_type.LINE));
 					this.setColor(color[0], color[1], color[2]);
 					this.setName(myfile.read(io_type.LINE));
 					this.setDescription(myfile.read(io_type.LINE));
 					this.setInstance(myfile.read(io_type.LINE));
-					this.class_id = myfile.read(io_type.LINE).tointeger();
-					this.setLevel(myfile.read(io_type.LINE).tointeger());
-					this.setExperience(myfile.read(io_type.LINE).tointeger());
-					this.setLearnPoints(myfile.read(io_type.LINE).tointeger());
+					this.class_id = myfile.read(io_type.LINE);
+					this.setLevel(myfile.read(io_type.LINE));
+					this.setExperience(myfile.read(io_type.LINE));
+					this.setLearnPoints(myfile.read(io_type.LINE));
 					this.setGuild(myfile.read(io_type.LINE));
-					this.setHealth(myfile.read(io_type.LINE).tointeger());
-					this.setMaxHealth(myfile.read(io_type.LINE).tointeger());
-					this.setMana(myfile.read(io_type.LINE).tointeger());
-					this.setMaxMana(myfile.read(io_type.LINE).tointeger());
-					this.setStrength(myfile.read(io_type.LINE).tointeger());
-					this.setDexterity(myfile.read(io_type.LINE).tointeger());
-					this.setOneHandSkill(myfile.read(io_type.LINE).tointeger());
-					this.setTwoHandSkill(myfile.read(io_type.LINE).tointeger());
-					this.setBowSkill(myfile.read(io_type.LINE).tointeger());
-					this.setCrossbowSkill(myfile.read(io_type.LINE).tointeger());
-					this.setMagicCircle(myfile.read(io_type.LINE).tointeger());
-					this.setSneakSkill(myfile.read(io_type.LINE).tointeger());
-					this.setPicklockSkill(myfile.read(io_type.LINE).tointeger());
-					this.setPickpocketSkill(myfile.read(io_type.LINE).tointeger());
-					this.setRuneSkill(myfile.read(io_type.LINE).tointeger());
-					this.setAlchemySkill(myfile.read(io_type.LINE).tointeger());
-					this.setSmithSkill(myfile.read(io_type.LINE).tointeger());
-					this.setTrophySkill(myfile.read(io_type.LINE).tointeger());
-					this.setAcrobaticSkill(myfile.read(io_type.LINE).tointeger());
+					this.setHealth(myfile.read(io_type.LINE));
+					this.setMaxHealth(myfile.read(io_type.LINE));
+					this.setMana(myfile.read(io_type.LINE));
+					this.setMaxMana(myfile.read(io_type.LINE));
+					this.setStrength(myfile.read(io_type.LINE));
+					this.setDexterity(myfile.read(io_type.LINE));
+					this.setOneHandSkill(myfile.read(io_type.LINE));
+					this.setTwoHandSkill(myfile.read(io_type.LINE));
+					this.setBowSkill(myfile.read(io_type.LINE));
+					this.setCrossbowSkill(myfile.read(io_type.LINE));
+					this.setMagicCircle(myfile.read(io_type.LINE));
+					this.setSneakSkill(myfile.read(io_type.LINE));
+					this.setPicklockSkill(myfile.read(io_type.LINE));
+					this.setPickpocketSkill(myfile.read(io_type.LINE));
+					this.setRuneSkill(myfile.read(io_type.LINE));
+					this.setAlchemySkill(myfile.read(io_type.LINE));
+					this.setSmithSkill(myfile.read(io_type.LINE));
+					this.setTrophySkill(myfile.read(io_type.LINE));
+					this.setAcrobaticSkill(myfile.read(io_type.LINE));
 					this.setProfession(myfile.read(io_type.LINE));
-					this.setProfessionLevel(myfile.read(io_type.LINE).tointeger());
-					this.setProfessionExp(myfile.read(io_type.LINE).tointeger());
-					this.setMiningSkill(myfile.read(io_type.LINE).tointeger());
-					this.setHuntingSkill(myfile.read(io_type.LINE).tointeger());
-					this.setHerbalismSkill(myfile.read(io_type.LINE).tointeger());
-					this.setStamina(myfile.read(io_type.LINE).tointeger());
+					this.setProfessionLevel(myfile.read(io_type.LINE));
+					this.setProfessionExp(myfile.read(io_type.LINE));
+					this.setMiningSkill(myfile.read(io_type.LINE));
+					this.setHuntingSkill(myfile.read(io_type.LINE));
+					this.setHerbalismSkill(myfile.read(io_type.LINE));
+					this.setStamina(myfile.read(io_type.LINE));
 						local vis = sscanf("sdsd", myfile.read(io_type.LINE));
 					this.setVisual(vis[0], vis[1], vis[2], vis[3]);
 						local scale = sscanf("ffff", myfile.read(io_type.LINE));
@@ -1258,9 +1462,9 @@ class Player {
 						local pos = sscanf("ffff", myfile.read(io_type.LINE));
 					this.setPosition(pos[0], pos[1], pos[2], pos[3]);
 					this.setWorld(myfile.read(io_type.LINE));
-					this.setVirtualWorld(myfile.read(io_type.LINE).tointeger());
-					this.setInvisibility(toBool(myfile.read(io_type.LINE)));
-					this.setWhitelist(toBool(myfile.read(io_type.LINE)));
+					this.setVirtualWorld(myfile.read(io_type.LINE));
+					this.setInvisibility(myfile.read(io_type.LINE));
+					this.setWhitelist(myfile.read(io_type.LINE));
 				}
 			myfile.close();
 			}
@@ -1270,18 +1474,33 @@ class Player {
 }
 
 addEventHandler("onPlayerJoin", function(pid){
+	if(isNpc(pid)) return;
+
 	Players[pid] <- Player(pid);
 });
 
 addEventHandler("onPlayerDisconnect", function(pid, reason){
+	if(isNpc(pid)) return;
+
 	Players[pid].save();
+	Players[pid].inventory.items.clear();
 	Players.rawdelete(pid);
 });
 
+addEventHandler("onPlayerRegister", function(pid){
+	if(isNpc(pid)) return;
+
+	Players[pid].save();
+});
+
 addEventHandler("onPlayerDead", function(pid, kid){
+	if(isNpc(pid)) return;
+
 	Players[pid].unspawn();
 });
 
 addEventHandler("onPlayerRespawn", function(pid){
+	if(isNpc(pid)) return;
+
 	Players[pid].respawn();
 });

@@ -1,43 +1,79 @@
 <server>
-	<script src="Config.nut" type="shared" />
-
-	<script src="Events/shared.nut" type="shared" />
-	<script src="Events/server.nut" type="server" />
-	<script src="Events/client.nut" type="client" />
-
-	<script src="Functions/shared.nut" type="shared" />
-	<script src="Functions/server.nut" type="server" />
-	<script src="Functions/client.nut" type="client" />
-
-	<script src="default/playerlist.nut" type="client" />
-	<script src="default/net.nut" type="client" />
-
-	<script src="default/file.nut" type="server" />
-	<script src="MySQL.nut" type="server" />
+	<script src="Constants/Server.nut" type="shared" />
+	<script src="Constants/Packets.nut" type="shared" />
+	<script src="Constants/Calendar.nut" type="shared" />
+	<script src="Constants/Items.nut" type="shared" />
+	<script src="Constants/Player.nut" type="shared" />
+	<script src="Constants/States.nut" type="shared" />
+	<script src="Constants/GUI.nut" type="shared" />
+	<script src="Constants/Creator.nut" type="shared" />
+	<script src="Constants/Stats.nut" type="shared" />
+	<script src="Constants/World.nut" type="shared" />
+	<script src="Constants/ACP.nut" type="shared" />
+	<script src="Constants/Ore.nut" type="shared" />
 
 	<script src="Tables/Classes.nut" type="shared" />
+	<script src="Tables/NPCs.nut" type="shared" />
 	<script src="Tables/Creator.nut" type="shared" />
 	<script src="Tables/Animations.nut" type="shared" />
 	<script src="Tables/Locations.nut" type="shared" />
 	<script src="Tables/Worlds.nut" type="shared" />
 	<script src="Tables/Zones.nut" type="shared" />
-	<script src="Tables/Items.nut" type="shared" />
+
+	<script src="Classes/Item.nut" type="shared" />
+		<script src="Tables/Items/Armors.nut" type="shared" />
+		<script src="Tables/Items/Shields.nut" type="shared" />
+		<script src="Tables/Items/Helmets.nut" type="shared" />
+		<script src="Tables/Items/Melee1H.nut" type="shared" />
+		<script src="Tables/Items/Melee2H.nut" type="shared" />
+		<script src="Tables/Items/RangedBow.nut" type="shared" />
+		<script src="Tables/Items/RangedCBow.nut" type="shared" />
+		<script src="Tables/Items/Scrolls.nut" type="shared" />
+		<script src="Tables/Items/Runes.nut" type="shared" />
+		<script src="Tables/Items/Potions.nut" type="shared" />
+		<script src="Tables/Items/Plants.nut" type="shared" />
+		<script src="Tables/Items/Food.nut" type="shared" />
+		<script src="Tables/Items/Drinks.nut" type="shared" />
+		<script src="Tables/Items/Amulets.nut" type="shared" />
+		<script src="Tables/Items/Rings.nut" type="shared" />
+		<script src="Tables/Items/Belts.nut" type="shared" />
+		<script src="Tables/Items/Written.nut" type="shared" />
+		<script src="Tables/Items/Trophies.nut" type="shared" />
+		<script src="Tables/Items/Miscellaneous.nut" type="shared" />
 
 	<script src="Packets/Log.nut" type="shared" />
 	<script src="Packets/Statistics.nut" type="shared" />
+	<script src="Packets/HUD.nut" type="shared" />
+	<script src="Packets/Login.nut" type="shared" />
 	<script src="Packets/Creator.nut" type="shared" />
 	<script src="Packets/Items.nut" type="shared" />
+	<script src="Packets/Inventory.nut" type="shared" />
 	<script src="Packets/Excavation.nut" type="shared" />
 	<script src="Packets/PlayerCMD.nut" type="shared" />
+	<script src="Packets/Time.nut" type="shared" />
+	<script src="Packets/NPC.nut" type="shared" />
 
+	<script src="default/Playerlist.nut" type="client" />
+	<script src="default/Net.nut" type="client" />
+
+	<script src="default/File.nut" type="server" />
+
+	<import src="Events/import.xml" />
+	<import src="Functions/import.xml" />
+
+	<script src="Classes/MySQL.nut" type="server" />
 	<script src="Classes/Player.nut" type="server" />
-	<script src="Classes/Item.nut" type="server" />
+	<script src="Classes/NPC.nut" type="server" />
+	<script src="Classes/Inventory.nut" type="server" />
+	<script src="Classes/Chunks.nut" type="shared" />
 	<script src="Classes/Ore.nut" type="client" />
-
-	<script src="Calendar.nut" type="shared" />
-
-	<script src="Misc/Log.nut" type="server" />
+	<script src="Classes/Calendar.nut" type="server" />
 
 	<script src="Misc/Cursor.nut" type="client" />
 	<script src="Misc/Keys.nut" type="client" />
+
+	<script src="MySQL/Actions.nut" type="server" />
+	<script src="MySQL/Autosave.nut" type="server" />
+	<script src="MySQL/Server_Info.nut" type="server" />
+	<script src="MySQL/Player_Info.nut" type="server" />
 </server>

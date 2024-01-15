@@ -59,3 +59,11 @@ class PlayerCreatorMessage extends BPacketMessage {
 	</ type = BPacketString />
 	talent = ""
 }
+
+class PlayerHeightMessage extends BPacketMessage {
+	</ type = BPacketInt32 />
+	playerId = -1
+
+	</ type = BPacketFloat />
+	height = -1
+}

@@ -1,11 +1,16 @@
-local minOre;
+local minOre = 1;
+local maxOre = 10;
+local oreChance;
+local minOreBonus;
+local maxOreBonus;
+local bonusOreChance;
+
 local learnSkill;
 local mineSkill;
 local mineSkillMax = 1000000;
-local excavateTimer;
-local oreChance;
 
 local curr_stm;
+local excavateTimer;
 
 ExcavationCheckMessage.bind(function(pid, message){
 	local stmCheck = ExcavationResultMessage(pid,
@@ -17,11 +22,15 @@ ExcavationCheckMessage.bind(function(pid, message){
 ExcavationOreMessage.bind(function(pid, message){
 	Players[pid].excavating = true;
 
-	minOre = randomRange(1, 10);
-
 	mineSkill = Players[pid].getMiningSkill();
-	learnSkill = (minOre * 5).tointeger();
-	oreChance = randomRange(learnSkill, mineSkill / 2).tointeger();
+
+	local moduloSkill = mineSkill % 10;
+	minOreBonus = moduloSkill;
+	maxOreBonus = minOreBonus * 5;
+	bonusOreChance = randomRange(minOreBonus, maxOreBonus).tointeger();
+
+	oreChance = randomRange(minOre, maxOre).tointeger() + bonusOreChance;
+	learnSkill = (oreChance * 5).tointeger();
 
 	curr_stm = Players[pid].getStamina();
 
@@ -38,7 +47,7 @@ ExcavationOreMessage.bind(function(pid, message){
 ExcavationFinishedMessage.bind(function(pid, message){
 	Players[pid].excavating = false;
 
-	Players[pid].setStamina(curr_stm - 2);
+	Players[pid].setStamina(curr_stm - 5);
 
 	Players[pid].giveItem("ITMI_NUGGET", oreChance);
 

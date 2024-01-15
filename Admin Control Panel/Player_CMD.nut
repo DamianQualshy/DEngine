@@ -53,7 +53,7 @@ function CMD_TRY(pid, params){
 	local resultFormat = format("#%s tried to %s, %s.#", Players[pid].getName(), params, resultMessage);
 
 	for(local i = 0, end = getMaxSlots(); i < end; ++i){
-		if(!Players.rawin(i)) break;
+		if(!Players.rawin(i)) continue;
 		if(!Players[i].isLogged()) continue;
 		if(Players[i].getWorld() != Players[pid].getWorld()) continue;
 
@@ -100,7 +100,7 @@ function CMD_DICE(pid, params){
 
 	if(result == -1) return;
 	for(local i = 0, end = getMaxSlots(); i < end; ++i){
-		if(!Players.rawin(i)) break;
+		if(!Players.rawin(i)) continue;
 		if(!Players[i].isLogged()) continue;
 		if(Players[i].getWorld() != Players[pid].getWorld()) continue;
 

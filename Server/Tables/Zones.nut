@@ -53,7 +53,3 @@ zones <- [
 		]
 	})
 ];
-
-foreach(zone in zones){
-	AreaManager.add(zone);
-}

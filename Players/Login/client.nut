@@ -141,7 +141,7 @@ addEventHandler("onInit", function(){
 	toggleLogin(true);
 });
 
-function showButtons(toggle){
+local showButtons = function(toggle){
 	loginGUI.playBtn.setVisible(toggle);
 	loginGUI.exitBtn.setVisible(toggle);
 }
@@ -151,13 +151,13 @@ addEventHandler("GUI.onClick", function(self){
 		switch(self){
 			case loginGUI.playBtn:
 				loginGUI.fail.setVisible(false);
-				packet.reset();
 				if(loginGUI.logInp != "" && loginGUI.passInp != ""){
 					showButtons(false);
-					packet.writeUInt8(packets.login);
-						packet.writeString(loginGUI.logInp.getText());
-						packet.writeString(loginGUI.passInp.getText());
-					packet.send(RELIABLE_ORDERED);
+					local loginPacket = PlayerLoginMessage(heroId,
+						loginGUI.logInp.getText(),
+						loginGUI.passInp.getText()
+						).serialize();
+					loginPacket.send(RELIABLE_ORDERED);
 				} else {
 					loginGUI.fail.setVisible(true);
 				}
@@ -170,30 +170,27 @@ addEventHandler("GUI.onClick", function(self){
 	}
 });
 
-addEventHandler("onPacket", function(packet){
-	if(loginGUIvisible){
-		local packetId = packet.readUInt8();
-		switch(packetId){
-			case packets.login_fail:
-				local soundFail = format("SVM_%d_HANDSOFF.WAV", rand() % 15);
-				loginGUI.fail.setVisible(true);
-				showButtons(true);
-					Sound(soundFail).play();
-				setTimer(function(){
-					loginGUI.fail.setVisible(false);
-				}, 5000, 1);
-			break;
-			case packets.login_success:
-				toggleLogin(false);
-					Sound(soundLogin[rand() % soundLogin.len()]).play();
-			break;
-			case packets.login_register:
-				toggleLogin(false);
-				toggleCreator(true);
-					Sound(soundRegister[rand() % soundRegister.len()]).play();
-			break;
-		}
-	}
+PlayerLoginFailMessage.bind(function(message){
+	local soundFail = format("SVM_%d_HANDSOFF.WAV", rand() % 15);
+	loginGUI.fail.setVisible(true);
+
+	showButtons(true);
+		Sound(soundFail).play();
+
+	setTimer(function(){
+		loginGUI.fail.setVisible(false);
+	}, 5000, 1);
+});
+
+PlayerLoginSuccessMessage.bind(function(message){
+	toggleLogin(false);
+		Sound(soundLogin[rand() % soundLogin.len()]).play();
+});
+
+PlayerRegisterMessage.bind(function(message){
+	toggleLogin(false);
+	toggleCreator(true);
+		Sound(soundRegister[rand() % soundRegister.len()]).play();
 });
 
 local creatorCollection = GUI.Collection({
@@ -821,10 +818,10 @@ addEventHandler("GUI.onChange", function(object){
 				setPlayerFatness(heroId, fatness);
 			break;
 			case heightScroll:
-				packet.reset();
-				packet.writeUInt8(packets.creator_scale);
-					packet.writeFloat(height);
-				packet.send(RELIABLE);
+				local heightPacket = PlayerHeightMessage(heroId,
+					height
+					).serialize();
+				heightPacket.send(RELIABLE_ORDERED);
 			break;
 			case walkScroll:
 				creatorGUI.walk.setText(format("Walking Style: %s", walking[walk].name));
@@ -917,7 +914,7 @@ addEventHandler("GUI.onClick", function(self){
 		foreach(id, tex in facesTex){
 			if(tex == self){
 				local name = facesTex[id].getFile();
-				do{
+				do {
 					index = name.find(findHead);
 
 					if(index != null){
@@ -931,7 +928,7 @@ addEventHandler("GUI.onClick", function(self){
 		foreach(id, tex in bodiesTex){
 			if(tex == self){
 				local name = bodiesTex[id].getFile();
-				do{
+				do {
 					index = name.find(findBody);
 
 					if(index != null){

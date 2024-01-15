@@ -180,8 +180,9 @@ class GUI.DropDownList extends GUI.Button
 		if (!_visible)
 			return
 
-		list.setVisible(!list.getVisible())
-		ref.activeDropdownList = this.weakref()
+		local visible = !list.getVisible()
+		list.setVisible(visible)
+		ref.activeDropdownList = visible ? this.weakref() : null
 	}
 
 	function updateTexture()

@@ -204,9 +204,14 @@ class GUI.Draw extends GUIDrawClasses
 			return
 		}
 			
-		local lineSize = getLineSizePx()
-		local x = _positionPx.x, y = _positionPx.y
-		local width = 0, height = lineSize
+		local lineHeightPx = getLineSizePx()
+		local lineWidthPx = 0
+
+		local positionPxX = _positionPx.x
+		local positionPxY = _positionPx.y
+
+		local widthPx = 0
+		local heightPx = lineHeightPx
 			
 		local i = 0
 		foreach (info in parse(text, colorParserEnabled))
@@ -220,7 +225,7 @@ class GUI.Draw extends GUIDrawClasses
 
 				draw = _draws[i]
 
-				draw.setPositionPx(x, y)
+				draw.setPositionPx(positionPxX, positionPxY)
 				draw.setScale(_scale.width, _scale.height)
 
 				draw.setColor(info.color.r, info.color.g, info.color.b)
@@ -234,30 +239,33 @@ class GUI.Draw extends GUIDrawClasses
 
 			if (info.newLine)
 			{
-				local lineWidth = x - _positionPx.x
+				if (draw)
+					lineWidthPx += draw.widthPx
 
-				if (lineWidth > width)
-					width = lineWidth
+				if (lineWidthPx > widthPx)
+					widthPx = lineWidthPx
 
-				height += lineSize
+				lineWidthPx = 0
+				heightPx += lineHeightPx
 
-				x = _positionPx.x
-				y += lineSize
-
+				positionPxX = _positionPx.x
+				positionPxY += lineHeightPx
 			}
 			else if (draw)
-				x += draw.widthPx
+			{
+				positionPxX += draw.widthPx
+				lineWidthPx += draw.widthPx
+			}
 				
 			++i
 		}
 
-		local lineWidth = x - _positionPx.x
+		local lineWidthPx = positionPxX - _positionPx.x
+		if (lineWidthPx > widthPx)
+			widthPx = lineWidthPx
 
-		if (lineWidth > width)
-			width = lineWidth
-
-		_sizePx.width = width
-		_sizePx.height = height
+		_sizePx.width = widthPx
+		_sizePx.height = heightPx
 
 		_drawsCount = i
 

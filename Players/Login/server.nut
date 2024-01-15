@@ -1,41 +1,35 @@
-addEventHandler("onPacket", function(pid, packet){
-	local packetId = packet.readUInt8();
-	switch(packetId){
-		case packets.login:
-			//if(loginGUIvisible){
-				local login = packet.readString();
-				local passwd = packet.readString();
-				if(Players[pid].doesExist()){
-					if(Players[pid].getLogin() == login && Players[pid].getPassword() == md5(passwd)){
-							spawnPlayer(pid);
+PlayerHeightMessage.bind(function(pid, message){
+	local height = message.height;
+	setPlayerScale(pid, height, height, height);
+});
 
-						Players[pid].load();
-						Players[pid].logged = true;
+PlayerLoginMessage.bind(function(pid, message){
+	if(Players[pid].doesExist()){
+		if(Players[pid].getLogin() == message.login && Players[pid].getPassword() == md5(message.password)){
+			if(Players[pid].getLastHero().CK == 0){
+				spawnPlayer(pid);
 
-							packet.reset();
-							packet.writeUInt8(packets.login_success);
-							packet.send(pid, RELIABLE_ORDERED);
-					} else {
-						packet.reset();
-						packet.writeUInt8(packets.login_fail);
-						packet.send(pid, RELIABLE_ORDERED);
-					}
-				} else {
-					Players[pid].setLogin(login);
-					Players[pid].setPassword(md5(passwd));
+				Players[pid].load();
+				Players[pid].logged = true;
 
-						packet.reset();
-						packet.writeUInt8(packets.login_register);
-						packet.send(pid, RELIABLE_ORDERED);
-				}
-			//}
-		break;
-		case packets.creator_scale:
-			//if(creatorGUIvisible){
-				local height = packet.readFloat();
-				setPlayerScale(pid, height, height, height);
-			//}
-		break;
+				local successPacket = PlayerLoginSuccessMessage(pid).serialize();
+				successPacket.send(pid, RELIABLE_ORDERED);
+
+				callEvent("onPlayerLogin", pid);
+			} else {
+				local registerPacket = PlayerRegisterMessage(pid).serialize();
+				registerPacket.send(pid, RELIABLE_ORDERED);
+			}
+		} else {
+			local failPacket = PlayerLoginFailMessage(pid).serialize();
+			failPacket.send(pid, RELIABLE_ORDERED);
+		}
+	} else {
+		Players[pid].setLogin(message.login);
+		Players[pid].setPassword(md5(message.password));
+
+		local registerPacket = PlayerRegisterMessage(pid).serialize();
+		registerPacket.send(pid, RELIABLE_ORDERED);
 	}
 });
 
@@ -99,4 +93,8 @@ PlayerCreatorMessage.bind(function(pid, message){
 
 		Players[pid].bulkSendStats();
 		Players[pid].logged = true;
+
+		//Players[pid].save();
+
+		callEvent("onPlayerRegister", pid);
 });

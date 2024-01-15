@@ -17,7 +17,7 @@ class GUI.Button extends GUIButtonClasses
 
 		GUI.Texture.constructor.call(this, arg)
 		if (draw)
-			updateDrawPosition()
+			alignDraw()
 	}
 
 	function setOffsetPx(x, y)
@@ -25,7 +25,7 @@ class GUI.Button extends GUIButtonClasses
 		GUI.Offset.setOffsetPx.call(this, x, y)
 
 		if (draw)
-			updateDrawPosition()
+			alignDraw()
 	}
 
 	function setAlignment(alignment)
@@ -33,7 +33,7 @@ class GUI.Button extends GUIButtonClasses
 		GUI.Alignment.setAlignment.call(this, alignment)
 
 		if (draw)
-			updateDrawPosition()
+			alignDraw()
 	}
 
 	function setVisible(visible)
@@ -80,7 +80,7 @@ class GUI.Button extends GUIButtonClasses
 		GUI.Texture.setSizePx.call(this, width, height)
 
 		if (draw)
-			updateDrawPosition()
+			alignDraw()
 	}
 
 	function getText()
@@ -97,7 +97,7 @@ class GUI.Button extends GUIButtonClasses
 			return
 
 		draw.setText(text)
-		updateDrawPosition()
+		alignDraw()
 	}
 
 	function getFont()
@@ -114,17 +114,17 @@ class GUI.Button extends GUIButtonClasses
 			return
 
 		draw.setFont(font)
-		updateDrawPosition()
+		alignDraw()
 	}
 
-	function updateDrawPosition()
+	function alignDraw()
 	{
 		local positionPx = getPositionPx()
 		local offsetPx = getOffsetPx()
 		local sizePx = getSizePx()
 		local drawSizePx = draw.getSizePx()
 		local drawPositionXPx = positionPx.x + offsetPx.x
-		local drawPositionYPx = positionPx.y + offsetPx.y + (sizePx.height - drawSizePx.height) / 2
+		local drawPositionYPx = positionPx.y + offsetPx.y + (sizePx.height > 0 ? (sizePx.height - drawSizePx.height) / 2 : 0)
 
 		switch (_alignment)
 		{

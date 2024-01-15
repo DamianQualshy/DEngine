@@ -1,4 +1,11 @@
 <server>
+	<script src="AI/AI_Intern/AI_Server.nut" type="server" />
+	<script src="AI/AI_Intern/AI_Client.nut" type="client" />
+
+	<script src="AI/Human/B_Human/B_LookAtNpc.nut" type="server" />
+	<script src="AI/Human/B_Human/B_Say.nut" type="server" />
+	<script src="AI/Human/B_Human/B_Say_Smalltalk.nut" type="server" />
+
 	<script src="server.nut" type="server" />
 	<script src="client.nut" type="client" />
 </server>

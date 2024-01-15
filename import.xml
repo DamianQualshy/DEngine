@@ -1,7 +1,6 @@
 <server>
 		<!-- Modules -->
 	<module src="Modules/MySQL.x64.dll" type="server" />
-	<module src="Modules/barrier.dll" type="client" />
 
 		<!-- Utilities -->
 	<import src="Utilities/import.xml" />
@@ -25,9 +24,6 @@
 
 		<!-- Chat -->
 	<import src="Chat/import.xml" />
-
-		<!-- Arena -->
-	<import src="Arena/import.xml" />
 
 
 		<!-- Server -->

@@ -3,44 +3,60 @@ local ref =
 	activeToolTip = null
 }
 
+local function clamp(x, min, max)
+{
+	if (x < min)
+		return min
+	
+	if (x > max)
+		return max
+
+	return x
+}
+
 local toolTipInterval = -1
 
 class GUI.ToolTip extends GUI.Button
 {
 #public:
-	cursorOffset = null
-
-#private:
-	_toolTip = null
+	tips = null
 	
 	constructor(arg = null)
 	{
 		GUI.Button.constructor.call(this, arg)
-		_toolTip = {}
+		tips = {}
 
-		if ("cursorOffsetPx" in arg)
-			cursorOffset = GUI.Offset({offsetPx = arg.cursorOffsetPx})
-		else if ("cursorOffset" in arg)
-			cursorOffset = GUI.Offset({offset = arg.cursorOffset})
-		else
-			cursorOffset = GUI.Offset(null)
+		if ("tips" in arg)
+		{
+			foreach (tip in arg.tips)
+				addTip(tip.object, tip.text)
+		}
 	}
 
-	function getToolTip(object)
+	function getTip(object)
 	{
-		if (!(object in _toolTip))
+		if (!(object in tips))
 			return null
 
-		return _toolTip[object]
+		return tips[object]
 	}
 
-	function setToolTip(object, text)
+	function addTip(object, text)
 	{
 		object.toolTip = this
-		_toolTip[object] <- text
+		tips[object] <- text
 
 		object.bind(EventType.MouseIn, onMouseIn)
 		object.bind(EventType.MouseOut, onMouseOut)
+	}
+
+	function removeTip(object, text)
+	{
+		object.toolTip = null
+		delete tips[object]
+
+		object.unbind(EventType.MouseIn, onMouseIn)
+		object.unbind(EventType.MouseOut, onMouseOut)
 	}
 
 	function onMouseIn(self)
@@ -50,11 +66,11 @@ class GUI.ToolTip extends GUI.Button
 
 		ref.activeToolTip = self.toolTip.weakref()
 
-		local toolTip = ref.activeToolTip.getToolTip(self)
-
-		if (toolTip)
-			ref.activeToolTip.setText(toolTip)
-
+		local tip = ref.activeToolTip.getTip(self)
+		if (!tip)
+			return
+		
+		ref.activeToolTip.setText(tip)
 		toolTipInterval = 0
 	}
 
@@ -78,10 +94,20 @@ class GUI.ToolTip extends GUI.Button
 
 		if (toolTipInterval >= TOOLTIP_INTERVAL)
 		{
-			local cursorPositionPx = getCursorPositionPx()
-			local cursorOffsetPx = ref.activeToolTip.cursorOffset.getOffsetPx()
+			local resolution = getResolution()
+			
+			local sizePx = ref.activeToolTip.getSizePx()
+			if (sizePx.width == 0 && sizePx.height == 0)
+				sizePx = ref.activeToolTip.draw.getSizePx()
 
-			ref.activeToolTip.setPositionPx(cursorPositionPx.x + cursorOffsetPx.x, cursorPositionPx.y + cursorOffsetPx.y)
+			local cursorPositionPx = getCursorPositionPx()
+			local cursorSizePx = getCursorSizePx()
+
+			ref.activeToolTip.setPositionPx(
+				clamp(cursorPositionPx.x, 0, resolution.x - sizePx.width),
+				clamp(cursorPositionPx.y + cursorSizePx.height, 0, resolution.y - sizePx.height - cursorSizePx.height)
+			)
+
 			ref.activeToolTip.top()
 			ref.activeToolTip.setVisible(true)
 		}

@@ -361,6 +361,8 @@ function toggleStats(toggle){
 		disableControls(toggle);
 		setCursorVisible(toggle);
 
+		stopAni(heroId);
+
 		if(toggle == true){
 			local playerPos = getPlayerPosition(heroId);
 			local playerAngle = getPlayerAngle(heroId);
@@ -397,12 +399,9 @@ function toggleStats(toggle){
 
 			Camera.setPosition(targetCameraPos.x, targetCameraPos.y, targetCameraPos.z);
 
-			stopAni(heroId);
 			playAni(heroId, "S_FIRE_VICTIM");
 
 				updateStats();
-		} else {
-			playAni(heroId, "S_RUN");
 		}
 
 		hudBarToggle(!toggle);
@@ -417,6 +416,15 @@ addEventHandler("GUI.onClick", function(self){
 		case statsGUI.switch_stats:
 			statsGUIswitch_num = !statsGUIswitch_num;
 			updateStats();
+		break;
+	}
+});
+
+addEventHandler("onKeyDown", function(key){
+	switch(key){
+		case KEY_B:
+		case KEY_C:
+			toggleStats(!statsGUIvisible);
 		break;
 	}
 });
@@ -663,14 +671,4 @@ PlayerAcrobaticMessage.bind(function(message){
 	statsVal.acrobatic = message.acrobatic;
 
 	updateStats();
-});
-
-
-addEventHandler("onKey", function(key){
-	switch(key){
-		case KEY_B:
-		case KEY_C:
-			toggleStats(!statsGUIvisible);
-		break;
-	}
 });

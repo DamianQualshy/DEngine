@@ -43,7 +43,10 @@ addEventHandler("onPlayerCommand", function(pid, cmd, params){
 	}
 
 	if(Commands.rawin(cmd)){
-		if(checkPermissions(pid, Commands[cmd].perm)) Commands[cmd].func(pid, params);
+		if(checkPermissions(pid, Commands[cmd].perm)) {
+			Commands[cmd].func(pid, params);
+			callEvent("onPlayerSendsCommand", pid, cmd);
+		}
 	}
 });
 
@@ -59,4 +62,8 @@ PlayerRestStopMessage.bind(function(pid, message){
 		"T_STAND_2_JUMPUP"
 		).serialize();
 	restCMD.send(pid, RELIABLE_ORDERED);
+});
+
+addEventHandler("onPlayerDisconnect", function(pid, reason){
+	if(regenTimer != null) killTimer(regenTimer);
 });

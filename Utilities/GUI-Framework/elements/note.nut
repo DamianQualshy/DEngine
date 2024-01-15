@@ -10,7 +10,7 @@ local DataLine = class
 	_color = null
 	_alpha = 255
 
-	//	ReadOnly
+	// ReadOnly
 	_offsetXPx = 0 
 	_widthPx = 0	
 
@@ -559,6 +559,7 @@ class GUI.Note extends GUINoteClasses
 			visibleLine.setAlpha(line.getAlpha())
 
 			visibleLine.setPositionPx(positionPx.x + line.getOffsetPx(), positionYPx)
+			visibleLine.top()
 			positionYPx += _lineHeightPx
 		}
 	}

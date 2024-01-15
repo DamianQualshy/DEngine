@@ -1,9 +1,9 @@
 local tweenDraw = GUI.Draw({
-	position = {x = 0, y = any(500)}
+	positionPx = {x = 0, y = nay(3945)}
 	text = "zoneName"
-	font = "FONT_OLD_20_WHITE_HI.TGA",
+	font = "FONT_OLD_20_WHITE_HI.TGA"
 })
-local tweenDrawPos = {x = 0, y = any(500)};
+local tweenDrawPos = {x = 0, y = nay(3945)};
 local tweenAni = null;
 
 local soundEnter = Sound("ANVILHIT01.WAV");
@@ -16,19 +16,23 @@ addEventHandler("onInit", function(){
 });
 
 addEventHandler("onEnterZone", function(area){
+	if(area.isChunk) return;
+
 	tweenDrawPos.x = 0;
 	tweenDraw.setVisible(true);
 		tweenDraw.setText(area.name);
 		soundEnter.play();
-	tweenAni = Tween(3, tweenDrawPos, {x = anx(getResolution().x - 200), y = any(500)}, Tween.easing.outInCubic);
+	tweenAni = Tween(3, tweenDrawPos, {x = getResolution().x, y = nay(3945)}, Tween.easing.outInCubic);
 });
 
 addEventHandler("onExitZone", function(area){
+	if(area.isChunk) return;
+
 	tweenDrawPos.x = 0;
 	tweenDraw.setVisible(true);
 		tweenDraw.setText("Wilderness");
 		soundExit.play();
-	tweenAni = Tween(3, tweenDrawPos, {x = anx(getResolution().x - 200), y = any(500)}, Tween.easing.outInCubic);
+	tweenAni = Tween(3, tweenDrawPos, {x = getResolution().x, y = nay(3945)}, Tween.easing.outInCubic);
 });
 
 addEventHandler("Tween.onEnded", function(tween){
@@ -40,6 +44,6 @@ addEventHandler("Tween.onEnded", function(tween){
 
 addEventHandler("onRender", function(){
 	if(tweenDraw.getVisible()){
-		tweenDraw.setPosition(tweenDrawPos.x, tweenDrawPos.y);
+		tweenDraw.setPositionPx(tweenDrawPos.x, tweenDrawPos.y);
 	}
 });

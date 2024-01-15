@@ -6,10 +6,19 @@ function CMD_STATSADD(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local stat = args[1];
 	local stat_name = "";
 	local amount = args[2];
 	local amount_new = -1;
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the stats of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -95,9 +104,18 @@ function CMD_STATS(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local stat = args[1];
 	local stat_name = "";
 	local amount_new = args[2];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the stats of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -171,9 +189,18 @@ function CMD_WOUND(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local stat = args[1];
 	local stat_name = "";
 	local amount_new = args[2];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the stats of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -214,12 +241,13 @@ function CMD_DATE(pid, params){
 	local day = args[0];
 	local month = args[1];
 	local year = args[2];
-	local time = Calendar.getTime();
 
-	Calendar.updateTime(time.minute, time.hour, day, month, year);
+	Calendar.day = day;
+	Calendar.month = month;
+	Calendar.year = year;
 	sendServerMessage(pid, "SERVER", format("Date was changed to %02d/%02d/%04d.", day, month, year));
 }
-registerCommand("date", CMD_TIME, "Change server date.", perm.ADMIN);
+registerCommand("date", CMD_DATE, "Change server date.", perm.ADMIN);
 
 function CMD_NAME(pid, params){
 	local args = sscanf("ds", params);
@@ -229,7 +257,16 @@ function CMD_NAME(pid, params){
 	}
 
 	local id = args[0];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
 	local name = args[1];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't change the name of an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
@@ -242,22 +279,82 @@ registerCommand("name", CMD_NAME, "Change player's name permanently.", perm.ADMI
 function CMD_INSERT(pid, params){
 	local args = sscanf("dsd", params);
 	if(!args){
-		if(args[1] != null){
-			args[2] = 1;
-		} else {
-			sendServerMessage(pid, "PANEL", "Wrong parameters. Use /insert id instance amount");
-			return;
-		}
+		sendServerMessage(pid, "PANEL", "Wrong parameters. Use /insert id instance amount");
+		return;
 	}
 
 	local id = args[0];
-	local inst = args[1];
+		if(!Players.rawin(id)) {
+			sendServerMessage(pid, "PANEL", format("Player of ID %d does not exist.", id));
+			return;
+		}
+	local inst = args[1].toupper();
 	local amount = args[2];
+
+	if(isNpc(id)) {
+		sendServerMessage(pid, "PANEL", "You can't give items to an NPC.");
+		return;
+	}
 
 	if(!isPlayerConnected(id)) sendServerMessage(pid, "PANEL", format("Player of ID %d is not connected to the server.", id));
 	if(!Players[id].isLogged()) sendServerMessage(pid, "PANEL", format("Player of ID %d is not logged in.", id));
 
-	Players[id].giveItem(inst, amount);
-	sendServerMessage(id, "PANEL", format("Administrator %s gave you %d of %s.", Players[pid].getName(), amount, inst));
+	if(doesItemExist(inst)){
+		Players[id].giveItem(inst, amount);
+		sendServerMessage(id, "PANEL", format("Administrator %s gave you %d of %s.", Players[pid].getName(), amount, inst));
+	} else {
+		sendServerMessage(pid, "PANEL", format("Item of instance %s does not exist in the table.", inst));
+	}
 }
 registerCommand("insert", CMD_INSERT, "Give Player a new item.", perm.ADMIN);
+
+function CMD_GOTO(pid, params){
+	local args = sscanf("fff", params);
+	if(!args){
+		sendServerMessage(pid, "PANEL", "Wrong parameters. Use /goto x y z");
+		return;
+	}
+
+	local x = args[0];
+	local y = args[1];
+	local z = args[2];
+	local a = Players[pid].getPosition().a;
+
+	Players[pid].setPosition(x, y, z, a);
+	sendServerMessage(pid, "PANEL", format("You teleported to %f %f %f.", x, y, z));
+}
+registerCommand("goto", CMD_GOTO, "Teleport to specific coordinates.", perm.ADMIN);
+
+function CMD_CREATENPC(pid, params){
+	local args = sscanf("ss", params);
+	if(!args){
+		sendServerMessage(pid, "PANEL", "Wrong parameters. Use /npc name instance");
+		return;
+	}
+
+	local pos = Players[pid].getPosition();
+	local world = Players[pid].getWorld();
+
+	local npc = {
+		Name = args[0],
+		Instance = args[1],
+
+		ID = -1,
+
+		class_id = 0,
+		level = 5,
+
+		walkstyle = "HUMANS.MDS",
+		visual = {bm = "HUM_BODY_NAKED0", bt = 8, hm = "HUM_HEAD_PONY", ht = 18},
+		scale = {x = 1.0, y = 1.0, z = 1.0, f = 1.0},
+
+		world = world,
+		spawnpos = {x = pos.x, y = pos.y, z = pos.z, a = pos.a},
+
+		virtual_world = virtualworlds.TESTING
+	}
+
+	createNPC(npc);
+	sendServerMessage(pid, "PANEL", format("You created an NPC %s.", args[0]));
+}
+registerCommand("npc", CMD_CREATENPC, "Create an NPC template in-game.", perm.ADMIN);

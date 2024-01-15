@@ -6,6 +6,7 @@ function sendPrivateMessage(from_id, to_id, text){
 				sendMessageToPlayer(to_id, 244, 144, 24, format("(%s || %d) << %s", Players[from_id].getName(), from_id, text));
 
 				sendMessageToAdmin(from_id, 244, 144, 24, format("(%s >> %s) %s", Players[from_id].getName(), Players[to_id].getName(), text));
+				callEvent("onPlayerSendsMessage", from_id);
 			} else sendServerMessage(from_id, "PANEL", format("Player of ID %d is not logged.", to_id));
 		} else sendServerMessage(from_id, "PANEL", format("Player of ID %d is not connected.", to_id));
 	} else sendServerMessage(from_id, "PANEL", "You can't send private messages to yourself.");
@@ -26,6 +27,9 @@ addEventHandler("onPlayerCommand", function(id, cmd, params){
 				local message = params.slice(2);
 					if(message == "") break;
 			sendPrivateMessage(id, id_to, message);
+		break;
+		default:
+			return;
 		break;
 	}
 });
