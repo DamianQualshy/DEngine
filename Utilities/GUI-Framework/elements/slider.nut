@@ -49,12 +49,6 @@ class GUI.Slider extends GUI.Range
 		indicator.top()
 	}
 
-	function setAlpha(alpha)
-	{
-		base.setAlpha(alpha)
-		progress.setAlpha(alpha)
-	}
-
 	function setPositionPx(x, y)
 	{
 		local positionPx = getPositionPx()

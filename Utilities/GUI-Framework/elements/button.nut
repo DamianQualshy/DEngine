@@ -44,14 +44,6 @@ class GUI.Button extends GUIButtonClasses
 			draw.setVisible(visible)
 	}
 
-	function setAlpha(alpha)
-	{
-		GUI.Texture.setAlpha.call(this, alpha)
-
-		if (draw)
-			draw.setAlpha(alpha)
-	}
-
 	function top()
 	{
 		GUI.Texture.top.call(this)

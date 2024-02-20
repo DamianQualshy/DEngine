@@ -28,7 +28,6 @@
 	<script src="elements/input.nut" type="client" />
 	<script src="elements/collection.nut" type="client" />
 	<script src="elements/window.nut" type="client" />
-	<script src="elements/windowbox.nut" type="client" />
 	<script src="elements/tabpanel.nut" type="client" />
 	<script src="elements/list.nut" type="client" />
 	<script src="elements/gridlist.nut" type="client" />

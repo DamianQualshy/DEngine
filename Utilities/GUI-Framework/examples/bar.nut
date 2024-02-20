@@ -20,9 +20,9 @@ local verticalBar = GUI.Bar({
 	visible = true
 })
 
-addEventHandler("onMouseClick",function(btn)
+addEventHandler("onMouseDown",function(btn)
 {
-	if (btn != MOUSE_RMB)
+	if (btn != MOUSE_BUTTONRIGHT)
 		return
 
 	local value = horizontalBar.getValue()

@@ -290,7 +290,7 @@ class GUI.DropDownList extends GUI.Button
 		ref.activeDropdownList = null
 	}
 
-	static function onMouseClick(button)
+	static function onMouseDown(button)
 	{
 		if (!isCursorVisible())
 			return
@@ -311,4 +311,4 @@ class GUI.DropDownList extends GUI.Button
 	}
 }
 
-addEventHandler("onMouseClick", GUI.DropDownList.onMouseClick.bindenv(GUI.DropDownList))
+addEventHandler("onMouseDown", GUI.DropDownList.onMouseDown.bindenv(GUI.DropDownList))

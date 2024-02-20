@@ -10,6 +10,8 @@ local ref =
 local doubleClickTimestamp = null
 local currentEventType = -1
 
+local searchElementPointedByCursor = true
+
 class GUI.Event
 {
 	static _objects = []
@@ -150,11 +152,17 @@ class GUI.Event
 
 	function setPositionPx(x, y)
 	{
+		if (!searchElementPointedByCursor)
+			return
+
 		setElementPointedByCursor(findElementPointedByCursor())
 	}
 
 	function setSizePx(width, height)
 	{
+		if (!searchElementPointedByCursor)
+			return
+
 		setElementPointedByCursor(findElementPointedByCursor())
 	}
 
@@ -192,6 +200,16 @@ class GUI.Event
 	function isFocused()
 	{
 		return ref.focused == this
+	}
+
+	static function getSearchElementPointedByCursor()
+	{
+		return searchElementPointedByCursor
+	}
+
+	static function setSearchElementPointedByCursor(toggle)
+	{
+		searchElementPointedByCursor = toggle
 	}
 
 	static function findElementPointedByCursor()
@@ -305,7 +323,7 @@ class GUI.Event
 		}
 	}
 
-	static function onMouseClick(button)
+	static function onMouseDown(button)
 	{
 		if (!isCursorVisible())
 			return
@@ -319,7 +337,7 @@ class GUI.Event
 		callEvent("GUI.onMouseDown", ref.pointedByCursor, button)
 	}
 
-	static function onMouseRelease(button)
+	static function onMouseUp(button)
 	{
 		if (!isCursorVisible())
 			return
@@ -330,7 +348,7 @@ class GUI.Event
 		ref.focused.call(EventType.MouseUp, button)
 		callEvent("GUI.onMouseUp", ref.focused, button)
 
-		if (button == MOUSE_LMB)
+		if (button == MOUSE_BUTTONLEFT)
 		{
 			ref.focused.call(EventType.Click)
 			callEvent("GUI.onClick", ref.focused)
@@ -361,7 +379,7 @@ class GUI.Event
 	{
 		if (ref.focused)
 		{
-			for (local i = MOUSE_LMB; i <= MOUSE_MMB; ++i)
+			for (local i = MOUSE_BUTTONLEFT; i <= MOUSE_BUTTONMID; ++i)
 			{
 				if (!isMouseBtnPressed(i))
 					continue
@@ -377,8 +395,8 @@ class GUI.Event
 
 addEventHandler("onRender", GUI.Event.onRender.bindenv(GUI.Event))
 addEventHandler("onMouseMove", GUI.Event.onMouseMove.bindenv(GUI.Event))
-addEventHandler("onMouseClick", GUI.Event.onMouseClick.bindenv(GUI.Event))
-addEventHandler("onMouseRelease", GUI.Event.onMouseRelease.bindenv(GUI.Event))
+addEventHandler("onMouseDown", GUI.Event.onMouseDown.bindenv(GUI.Event))
+addEventHandler("onMouseUp", GUI.Event.onMouseUp.bindenv(GUI.Event))
 
 local _setCursorVisible = setCursorVisible
 function setCursorVisible(toggle)

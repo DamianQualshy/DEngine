@@ -2,7 +2,7 @@ local window = GUI.Window({
 	positionPx = {x = 0, y = 0}
 	sizePx = {width = 305, height = 230}
 	file = "BLACK.TGA"
-	alpha = 127
+	color = {a = 127}
 })
 
 local infoDraw = GUI.Draw({

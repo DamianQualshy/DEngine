@@ -11,7 +11,7 @@ local draw2 = GUI.Draw({
 
 local function draw_onMouseIn(self)
 {
-	self.setColor(255, 0, 0)
+	self.setColor({r = 255, g = 0, b = 0})
 }
 
 local function draw_onMouseOut(self)

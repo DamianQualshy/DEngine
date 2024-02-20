@@ -17,10 +17,8 @@ class GUI.Input extends GUIInputClasses
 	_type = null
 
 	_inputColor = null
-	_inputAlpha = 255
 
 	_placeholderColor = null
-	_placeholderAlpha = 255
 	_placeholderText = ""
 
 	_paddingPx = 2
@@ -38,12 +36,10 @@ class GUI.Input extends GUIInputClasses
 	{
 		_type = "type" in arg ? arg.type : Input.Text
 
-		_inputColor = "inputColor" in arg ? arg.inputColor : {r = 255, g = 255, b = 255}
-		_inputAlpha = "inputAlpha" in arg ? arg.inputAlpha : _inputAlpha
-
-		_placeholderColor = "placeholderColor" in arg ? arg.placeholderColor : {r = 255, g = 255, b = 255}
-		_placeholderAlpha = "placeholderAlpha" in arg ? arg.placeholderAlpha : _placeholderAlpha
 		_placeholderText = "placeholderText" in arg ? arg.placeholderText : _placeholderText
+
+		_inputColor = Color(255, 255, 255, 255)
+		_placeholderColor = Color(255, 255, 255, 255)
 		
 		if ("paddingPx" in arg)
 			_paddingPx = arg.paddingPx
@@ -57,8 +53,9 @@ class GUI.Input extends GUIInputClasses
 
 		draw = GUI.Draw("draw" in arg ? arg.draw : null)
 		draw.setDisabled(true)
-		draw.setColor(_placeholderColor.r, _placeholderColor.g, _placeholderColor.b)
-		draw.setAlpha(_placeholderAlpha)
+
+		setInputColor("inputColor" in arg ? arg.inputColor : _inputColor)
+		setPlaceholderColor("placeholderColor" in arg ? arg.placeholderColor : _placeholderColor)
 
 		GUI.Texture.constructor.call(this, arg)
 		draw.setText(_text != "" ? _text : _placeholderText)
@@ -136,8 +133,7 @@ class GUI.Input extends GUIInputClasses
 		if(!active && _text == "")
 		{
 			draw.setText(_placeholderText)
-			draw.setColor(_placeholderColor.r, _placeholderColor.g, _placeholderColor.b)
-			draw.setAlpha(_placeholderAlpha)
+			draw.setColor(_placeholderColor)
 
 			updateDrawPosition()
 			return
@@ -156,58 +152,52 @@ class GUI.Input extends GUIInputClasses
 
 	function getInputColor()
 	{
-		return _inputColor
+		return clone _inputColor
 	}
 
-	function setInputColor(r, g, b)
+	function setInputColor(color)
 	{
-		_inputColor.r = r
-		_inputColor.g = g
-		_inputColor.b = b
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_inputColor.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_inputColor.g = color.g
+		
+		if (isColorInstance || "b" in color)
+			_inputColor.b = color.b
+
+		if (isColorInstance || "a" in color)
+			_inputColor.a = color.a
 
 		if(getActive())
-			draw.setColor(r, g, b)
-	}
-
-	function getInputAlpha()
-	{
-		return _inputAlpha
-	}
-
-	function setInputAlpha(alpha)
-	{
-		_inputAlpha = alpha
-
-		if(getActive())
-			draw.setAlpha(alpha)
+			draw.setColor(color)
 	}
 
 	function getPlaceholderColor()
 	{
-		return _placeholderColor
+		return clone _placeholderColor
 	}
 
-	function setPlaceholderColor(r, g, b)
+	function setPlaceholderColor(color)
 	{
-		_placeholderColor.r = r
-		_placeholderColor.g = g
-		_placeholderColor.b = b
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_placeholderColor.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_placeholderColor.g = color.g
+		
+		if (isColorInstance || "b" in color)
+			_placeholderColor.b = color.b
+
+		if (isColorInstance || "a" in color)
+			_placeholderColor.a = color.a
 
 		if(!getActive() && _text == "")
-			draw.setColor(r, g, b)
-	}
-
-	function setPlaceholderAlpha(alpha)
-	{
-		_placeholderAlpha = alpha
-
-		if(!getActive() && _text == "")
-			draw.setAlpha(alpha)
-	}
-
-	function getPlaceholderAlpha()
-	{
-		return _placeholderAlpha
+			draw.setColor(color)
 	}
 
 	function getPaddingPx()
@@ -368,7 +358,7 @@ class GUI.Input extends GUIInputClasses
 
 	function onMouseDown(self, button)
 	{
-		if (button != MOUSE_LMB)
+		if (button != MOUSE_BUTTONLEFT)
 			return
 
 		if (ref.activeInput == this)
@@ -396,20 +386,6 @@ class GUI.Input extends GUIInputClasses
 			ref.activeInput.addLetter(letter.tochar())
 	}
 
-	static function onMouseClick(button)
-	{
-		if (button != MOUSE_LMB)
-			return
-
-		if (!ref.activeInput)
-			return
-
-		if (GUI.Event.getElementPointedByCursor() instanceof this)
-			return
-
-		ref.activeInput.setActive(false)
-	}
-
 	static function hasActiveInput()
 	{
 		return ref.activeInput != null
@@ -418,4 +394,3 @@ class GUI.Input extends GUIInputClasses
 
 addEventHandler("onKeyDown", GUI.Input.onKeyDown)
 addEventHandler("onKeyInput", GUI.Input.onKeyInput)
-addEventHandler("onMouseClick", GUI.Input.onMouseClick.bindenv(GUI.Input))

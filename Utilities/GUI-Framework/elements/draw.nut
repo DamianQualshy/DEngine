@@ -13,7 +13,6 @@ class GUI.Draw extends GUIDrawClasses
 	_font = "FONT_OLD_10_WHITE_HI.TGA"
 
 	_color = null
-	_alpha = 255
 
 	_draws = null
 	_drawsCount = 1
@@ -23,14 +22,16 @@ class GUI.Draw extends GUIDrawClasses
 		GUI.Base.constructor.call(this, arg)
 		GUI.Event.constructor.call(this, arg)
 
-		_scale = "scale" in arg ? {width = arg.scale.width, height = arg.scale.height} : {width = 1.0, height = 1.0}
-		_color = "color" in arg ? {r = arg.color.r, g = arg.color.g, b = arg.color.b} : {r = 255, g = 255, b = 255}
-		_font = "font" in arg ? arg.font : _font
-		_alpha = "alpha" in arg ? arg.alpha : _alpha
-		updateLineSize()
-		
 		_draws = [Draw(0, 0, "")]
 		_sizePx = {width = 0.0, height = 0.0}
+		_scale = "scale" in arg ? {width = arg.scale.width, height = arg.scale.height} : {width = 1.0, height = 1.0}
+		_font = "font" in arg ? arg.font : _font
+
+		_color = Color(255, 255, 255, 255)
+		if ("color" in arg)
+			setColor(arg.color)
+
+		updateLineSize()
 
 		if ("positionPx" in arg)
 			_positionPx = {x = arg.positionPx.x, y = arg.positionPx.y}
@@ -146,7 +147,7 @@ class GUI.Draw extends GUIDrawClasses
 		local info = []
 
 		local expression = "\\n"
-		expression += (colorParserEnabled) ? "|" + @"\[#[0-9_a-f_A-F]{6,}]" : ""
+		expression += (colorParserEnabled) ? "|\\[#[0-9_a-f_A-F]{6,}\\]" : ""
 
 		local regex = regexp(expression)
 
@@ -228,8 +229,7 @@ class GUI.Draw extends GUIDrawClasses
 				draw.setPositionPx(positionPxX, positionPxY)
 				draw.setScale(_scale.width, _scale.height)
 
-				draw.setColor(info.color.r, info.color.g, info.color.b)
-				draw.alpha = _alpha
+				draw.color.set(info.color.r, info.color.g, info.color.b, _color.a)
 
 				draw.font = _font
 				draw.text = info.text
@@ -293,30 +293,27 @@ class GUI.Draw extends GUIDrawClasses
 
 	function getColor()
 	{
-		return _color
+		return clone _color
 	}
 
-	function setColor(r, g, b)
+	function setColor(color)
 	{
-		_color.r = r
-		_color.g = g
-		_color.b = b
+		local isColorInstance = typeof color == "Color"
+		
+		if (isColorInstance || "r" in color)
+			_color.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_color.g = color.g
+
+		if (isColorInstance || "b" in color)
+			_color.b = color.b
+		
+		if (isColorInstance || "a" in color)
+			_color.a = color.a
 
 		for (local i = 0; i != _drawsCount; ++i)
-			_draws[i].setColor(r, g, b)
-	}
-
-	function getAlpha()
-	{
-		return _alpha
-	}
-
-	function setAlpha(alpha)
-	{
-		_alpha = alpha
-
-		for (local i = 0; i != _drawsCount; ++i)
-			_draws[i].alpha = alpha
+			_draws[i].color = _color
 	}
 
 	function getScale()

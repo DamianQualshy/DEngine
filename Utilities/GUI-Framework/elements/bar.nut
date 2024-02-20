@@ -93,12 +93,6 @@ class GUI.Bar extends GUIBarClasses
 		progress.setVisible(visible)
 	}
 
-	function setAlpha(alpha)
-	{
-		GUI.Texture.setAlpha.call(this, alpha)
-		progress.setAlpha(alpha)
-	}
-
 	function setDisabled(disabled)
 	{
 		GUI.Texture.setDisabled.call(this, disabled)
@@ -110,8 +104,8 @@ class GUI.Bar extends GUIBarClasses
 		local positionPx = getPositionPx()
 		GUI.Texture.setPositionPx.call(this, x, y)
 
-        local offsetXPx = x - positionPx.x
-        local offsetYPx = y - positionPx.y
+		local offsetXPx = x - positionPx.x
+		local offsetYPx = y - positionPx.y
 		
 		local progressPositionPx = progress.getPositionPx()
 		progress.setPositionPx(progressPositionPx.x + offsetXPx, progressPositionPx.y + offsetYPx)

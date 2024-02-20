@@ -18,11 +18,11 @@ class GUI.Table extends GUI.GridList
 		local offsetXPx = x - positionPx.x
 		local offsetYPx = y - positionPx.y
 
-        local scrollbarPositionPx = scrollbar.getPositionPx()
-        scrollbar.setPositionPx(scrollbarPositionPx.x + offsetXPx, scrollbarPositionPx.y + offsetYPx)
+		local scrollbarPositionPx = scrollbar.getPositionPx()
+		scrollbar.setPositionPx(scrollbarPositionPx.x + offsetXPx, scrollbarPositionPx.y + offsetYPx)
 
-        foreach (column in columns)
-        {
+		foreach (column in columns)
+		{
 			local columnPositionPx = column.getPositionPx()
 			column.setPositionPx(columnPositionPx.x + offsetXPx, columnPositionPx.y + offsetYPx)
 
@@ -32,7 +32,7 @@ class GUI.Table extends GUI.GridList
 				local visibleCellPositionPx = visibleCell.getPositionPx()
 				visibleCell.setPositionPx(visibleCellPositionPx.x + offsetXPx, visibleCellPositionPx.y + offsetYPx)
 			}
-        }
+		}
 	}
 
 	function setDisabled(toggle)

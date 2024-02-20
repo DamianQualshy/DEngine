@@ -10,7 +10,6 @@ local GridListCell = class
 	_value = null
 	_color = null
 	_drawColor = null
-	_alpha = 255
 	_file = ""
 	_font = "FONT_OLD_10_WHITE_HI.TGA"
 	_isDisabled = false
@@ -23,12 +22,14 @@ local GridListCell = class
 
 		_value = "value" in arg ? arg.value : _value
 		_text = "text" in arg ? arg.text : _value
-		_color = "color" in arg ? arg.color : {r = 255, g = 255, b = 255}
-		_drawColor = "drawColor" in arg ? arg.drawColor : {r = 255, g = 255, b = 255}
-		_alpha = "alpha" in arg ? arg.alpha : _alpha
+		_color = Color(255, 255, 255, 255)
+		_drawColor = Color(255, 255, 255, 255)
 		_file = "file" in arg ? arg.file : _file
 		_font = "font" in arg ? arg.font : _font
 		_isDisabled = "disabled" in arg ? arg.disabled : _isDisabled
+
+		setColor("color" in arg ? arg.color : _color)
+		setDrawColor("drawColor" in arg ? arg.drawColor : _drawColor)
 	}
 
 	function getVisibleCell()
@@ -72,44 +73,55 @@ local GridListCell = class
 
 	function getColor()
 	{
-		return _color
+		return clone _color
 	}
 
-	function setColor(r, g, b)
+	function setColor(color)
 	{
-		_color = {r = r, g = g, b = b}
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_color.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_color.g = color.g
+
+		if (isColorInstance || "b" in color)
+			_color.b = color.b
+
+		if (isColorInstance || "a" in color)
+			_color.a = color.a
+
 
 		local visibleCell = getVisibleCell()
 		if (visibleCell)
-			visibleCell.setColor(r, g, b)
+			visibleCell.setColor(color)
 	}
 
 	function getDrawColor()
 	{
-		return _drawColor
+		return clone _drawColor
 	}
 
-	function setDrawColor(r, g, b)
+	function setDrawColor(color)
 	{
-		_drawColor = {r = r, g = g, b = b}
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_drawColor.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_drawColor.g = color.g
+
+		if (isColorInstance || "b" in color)
+			_drawColor.b = color.b
+
+		if (isColorInstance || "a" in color)
+			_drawColor.a = color.a
 
 		local visibleCell = getVisibleCell()
 		if (visibleCell)
-			visibleCell.draw.setColor(r, g, b)
-	}
-
-	function getAlpha()
-	{
-		return _alpha
-	}
-
-	function setAlpha(alpha)
-	{
-		_alpha = alpha
-
-		local visibleCell = getVisibleCell()
-		if (visibleCell)
-			visibleCell.setAlpha(alpha)
+			visibleCell.draw.setColor(color)
 	}
 
 	function getFile()
@@ -176,7 +188,7 @@ local GridListRow = class
 		local scrollValue = parent.scrollbar.range.getValue()
 		if (id >= scrollValue && id < parent.visibleRows.len() + scrollValue)
 			return parent.visibleRows[id - scrollValue]
-
+		
 		return null
 	}
 
@@ -186,7 +198,7 @@ local GridListRow = class
 		local visibleCell = cell.getVisibleCell()
 		if (visibleCell)
 			visibleCell.update(cell)
-
+			
 		cells[column] <- cell
 		return cell
 	}
@@ -234,13 +246,9 @@ class GUI.GridListVisibleCell extends GUI.Button
 
 	function update(dataCell)
 	{
-		local color = dataCell.getColor()
-		local drawColor = dataCell.getDrawColor()
-
 		setText(dataCell.getText())
-		setColor(color.r, color.g, color.b)
-		draw.setColor(drawColor.r, drawColor.g, drawColor.b)
-		setAlpha(dataCell.getAlpha())
+		setColor(dataCell.getColor())
+		draw.setColor(dataCell.getDrawColor())
 		setFile(dataCell.getFile())
 		setFont(dataCell.getFont())
 		setDisabled(dataCell.getDisabled())
@@ -249,7 +257,7 @@ class GUI.GridListVisibleCell extends GUI.Button
 		if (gridlist.getVisible() && !getVisible())
 		{
 			setVisible(true)
-
+			
 			if (gridlist.scrollbar.getVisible())
 				gridlist.scrollbar.top()
 		}
@@ -302,7 +310,7 @@ class GUI.GridListColumn extends GUI.Alignment
 		else
 			_widthPx = 0
 	}
-
+	
 	function getWidthPx()
 	{
 		return _widthPx
@@ -432,7 +440,7 @@ class GUI.GridList extends GUIGridListClasses
 	{
 		local positionPx = getPositionPx()
 		GUI.Texture.setPositionPx.call(this, x, y)
-
+		
 		local offsetXPx = x - positionPx.x
 		local offsetYPx = y - positionPx.y
 
@@ -543,7 +551,7 @@ class GUI.GridList extends GUIGridListClasses
 			case ScrollbarVisibilityMode.Always:
 				scrollbar.setVisible(visible)
 				break
-
+				
 			case ScrollbarVisibilityMode.Needed:
 				scrollbar.setVisible(visible && visibleRows.len() < rows.len())
 				break
@@ -566,7 +574,7 @@ class GUI.GridList extends GUIGridListClasses
 				visibleCell.setVisible(toggle && visibleCell.getDataCell())
 			}
 		}
-
+			
 		updateScrollbarVisibility()
 	}
 
@@ -637,7 +645,7 @@ class GUI.GridList extends GUIGridListClasses
 		{
 			if (columnsLen <= colId)
 				break
-
+				
 			local column = columns[colId]
 			row.cells[column] <- GridListCell(row, column, arg)
 		}
@@ -648,15 +656,15 @@ class GUI.GridList extends GUIGridListClasses
 			scrollbar.range.setMaximum(max)
 
 			if (!scrollbar.getVisible() && visible && _scrollbarVisibilityMode == ScrollbarVisibilityMode.Needed)
-				scrollbar.setVisible(true)
+				scrollbar.setVisible(true) 
 		}
-
+		
 		if (rowId >= scrollbar.range.getValue() + visibleRows.len())
 			return row
 
 		local visibleRow = row.getVisibleRow()
 		local begin = visibleRow ? visibleRow.id : 0
-
+		
 		for (local i = rowId + 1, end = rows.len(); i < end; ++i)
 			++rows[i].id
 
@@ -690,7 +698,7 @@ class GUI.GridList extends GUIGridListClasses
 			--rows[i].id
 
 		rows.remove(rowId)
-
+	
 		local oldMax = scrollbar.range.getMaximum()
 		if (oldMax > 0)
 		{
@@ -746,7 +754,7 @@ class GUI.GridList extends GUIGridListClasses
 		local marginPx = getMarginPx()
 		local rowsLen = rows.len()
 		local visibleRowsLen = (getSizePx().height - marginPx.top - marginPx.bottom) / (_rowHeightPx + _rowSpacingPx)
-
+	
 		_visibleRowsCount = visibleRowsLen <= rowsLen ? visibleRowsLen : rowsLen
 
 		// Insert visibleRows loop:
@@ -799,7 +807,7 @@ class GUI.GridList extends GUIGridListClasses
 					visibleCell.setDisabled(disabled)
 					visibleRow.cells[column] <- visibleCell
 				}
-
+					
 				visibleCell.setPositionPx(rowPositionXPx, rowPositionYPx)
 				visibleCell.setSizePx(columnWidthPx, _rowHeightPx)
 				rowPositionYPx += rowFullSizePx

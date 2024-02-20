@@ -8,7 +8,6 @@ local DataLine = class
 #private:
 	_text = ""
 	_color = null
-	_alpha = 255
 
 	// ReadOnly
 	_offsetXPx = 0 
@@ -21,9 +20,10 @@ local DataLine = class
 		metadata = "metadata" in arg ? arg.metadata : {}
 
 		_text = "text" in arg ? arg.text : _text
-		_color = "color" in arg ? arg.color : {r = 255, g = 255, b = 255}
-		_alpha = "alpha" in arg ? arg.alpha : _alpha
+		_color = Color(255, 255, 255, 255)
 		_widthPx = "widthPx" in arg ? arg.widthPx : _widthPx
+
+		setColor("color" in arg ? arg.color : _color)
 	}
 
 	function getVisibleLine()
@@ -51,30 +51,28 @@ local DataLine = class
 
 	function getColor()
 	{
-		return _color
+		return clone _color
 	}
 
-	function setColor(r, g, b)
+	function setColor(color)
 	{
-		_color = {r = r, g = g, b = b}
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_color.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_color.g = color.g
+
+		if (isColorInstance || "b" in color)
+			_color.b = color.b
+		
+		if (isColorInstance || "a" in color)
+			_color.a = color.a
 
 		local visibleLine = getVisibleLine()
 		if (visibleLine)
-			visibleLine.setColor(r, g, b)
-	}
-
-	function getAlpha()
-	{
-		return _alpha
-	}
-
-	function setAlpha(alpha)
-	{
-		_alpha = alpha
-
-		local visibleLine = getVisibleLine()
-		if (visibleLine)
-			visibleLine.setAlpha(alpha)
+			visibleLine.setColor(color)
 	}
 
 	function getOffsetPx()
@@ -369,15 +367,6 @@ class GUI.Note extends GUINoteClasses
 		updateScrollbarVisibility()
 	}
 
-	function setAlpha(alpha)
-	{
-		GUI.Texture.setAlpha.call(this, alpha)
-		scrollbar.setAlpha(alpha)
-
-		foreach(visibleLine in visibleLines)
-			visibleLine.setAlpha(alpha)
-	}
-
 	function top()
 	{
 		GUI.Texture.top.call(this)
@@ -443,11 +432,6 @@ class GUI.Note extends GUINoteClasses
 	{
 		GUI.Alignment.setAlignment.call(this, alignment)
 		updateLinesOffset()
-	}
-
-	function getAlpha()
-	{
-		return lines[id].alpha
 	}
 
 	function getMaxScrollbarValue()
@@ -552,11 +536,9 @@ class GUI.Note extends GUINoteClasses
 			}
 
 			local line = lines[i + scrollbarValue]
-			local color = line.getColor()
 
 			visibleLine.setText(line.getText())
-			visibleLine.setColor(color.r, color.g, color.b)
-			visibleLine.setAlpha(line.getAlpha())
+			visibleLine.setColor(line.getColor())
 
 			visibleLine.setPositionPx(positionPx.x + line.getOffsetPx(), positionYPx)
 			visibleLine.top()

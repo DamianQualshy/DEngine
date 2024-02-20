@@ -81,7 +81,7 @@ class GUI.Tab extends GUI.Button
 
 	function onMouseDown(self, btn)
 	{
-		if (btn != MOUSE_LMB)
+		if (btn != MOUSE_BUTTONLEFT)
 			return
 
 		local tabPanel = self.parent
@@ -100,9 +100,9 @@ class GUI.Tab extends GUI.Button
 		ref.movableTab = self.weakref()
 	}
 
-	static function onMouseRelease(button)
+	static function onMouseUp(button)
 	{
-		if (button != MOUSE_LMB)
+		if (button != MOUSE_BUTTONLEFT)
 			return
 
 		if (!ref.movableTab)
@@ -115,7 +115,7 @@ class GUI.Tab extends GUI.Button
 
 	static function onMouseMove(x, y)
 	{
-		if (!isMouseBtnPressed(MOUSE_LMB))
+		if (!isMouseBtnPressed(MOUSE_BUTTONLEFT))
 			return
 
 		if (!ref.movableTab)
@@ -209,7 +209,7 @@ class GUI.Tab extends GUI.Button
 	}
 }
 
-addEventHandler("onMouseRelease", GUI.Tab.onMouseRelease)
+addEventHandler("onMouseUp", GUI.Tab.onMouseUp)
 addEventHandler("onMouseMove", GUI.Tab.onMouseMove)
 
 local GUITabPanelClasses = classes(GUI.Texture, GUI.Orientation, GUI.Margin)

@@ -25,13 +25,13 @@ addEventHandler("onInit", function()
 
 texture.bind(EventType.MouseIn, function(self)
 {
-	self.setColor(255, 255, 0)
+	self.setColor({r = 255, g = 255, b = 0})
 	animTexture.stop()
 })
 
 texture.bind(EventType.MouseOut, function(self)
 {
-	self.setColor(255, 255, 255)
+	self.setColor({r = 255, g = 255, b = 255})
 	animTexture.play()
 })
 
@@ -43,7 +43,7 @@ texture.bind(EventType.MouseDown, function(self, btn)
 texture.bind(EventType.MouseUp, function(self, btn)
 {
 	if (self.isMouseAt())
-		self.setColor(255, 255, 0)
+		self.setColor({r = 255, g = 255, b = 0})
 	else
-		self.setColor(255, 255, 255)
+		self.setColor({r = 255, g = 255, b = 255})
 })

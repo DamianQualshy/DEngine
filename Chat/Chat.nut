@@ -3,7 +3,7 @@ local ChatLine = class
 	constructor(r, g, b, text)
 	{
 		_line = Draw(0, 0, text)
-		_line.setColor(r, g, b)
+		_line.setColor({r = r, g = g, b = b})
 	}
 
 	function getVisible()
@@ -43,7 +43,7 @@ local ChatPlayerLine = class extends ChatLine
 
 		local color = getPlayerColor(pid)
 		_nickname = Draw(0, 0, getPlayerName(pid) + ": ")
-		_nickname.setColor(color.r, color.g, color.b)
+		_nickname.setColor({r = color.r, g = color.g, b = color.b})
 	}
 
 	function getVisible()

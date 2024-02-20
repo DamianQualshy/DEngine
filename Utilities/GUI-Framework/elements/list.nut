@@ -10,7 +10,6 @@ local DataRow = class
 	_value = null
 	_color = null
 	_drawColor = null
-	_alpha = 255
 	_file = ""
 	_font = "FONT_OLD_10_WHITE_HI.TGA"
 	_isDisabled = false
@@ -23,12 +22,14 @@ local DataRow = class
 
 		_value = "value" in arg ? arg.value : _value
 		_text = "text" in arg ? arg.text : _value
-		_color = "color" in arg ? arg.color : {r = 255, g = 255, b = 255}
-		_drawColor = "drawColor" in arg ? arg.drawColor : {r = 255, g = 255, b = 255}
-		_alpha = "alpha" in arg ? arg.alpha : _alpha
+		_color = Color(255, 255, 255, 255)
+		_drawColor = Color(255, 255, 255, 255)
 		_file = "file" in arg ? arg.file : _file
 		_font = "font" in arg ? arg.font : _font
 		_isDisabled = "disabled" in arg ? arg.disabled : _isDisabled
+
+		setColor("color" in arg ? arg.color : _color)
+		setDrawColor("drawColor" in arg ? arg.drawColor : _drawColor)
 	}
 
 	function getVisibleRow()
@@ -69,44 +70,54 @@ local DataRow = class
 
 	function getColor()
 	{
-		return _color
+		return clone _color
 	}
 
-	function setColor(r, g, b)
+	function setColor(color)
 	{
-		_color = {r = r, g = g, b = b}
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_color.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_color.g = color.g
+
+		if (isColorInstance || "b" in color)
+			_color.b = color.b
+
+		if (isColorInstance || "a" in color)
+			_color.a = color.a
 
 		local visibleRow = getVisibleRow()
 		if (visibleRow)
-			visibleRow.setColor(r, g, b)
+			visibleRow.setColor(color)
 	}
 
 	function getDrawColor()
 	{
-		return _drawColor
+		return clone _drawColor
 	}
 
-	function setDrawColor(r, g, b)
+	function setDrawColor(color)
 	{
-		_drawColor = {r = r, g = g, b = b}
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			_drawColor.r = color.r
+
+		if (isColorInstance || "g" in color)
+			_drawColor.g = color.g
+
+		if (isColorInstance || "b" in color)
+			_drawColor.b = color.b
+
+		if (isColorInstance || "a" in color)
+			_drawColor.a = color.a
 
 		local visibleRow = getVisibleRow()
 		if (visibleRow)
-			visibleRow.draw.setColor(r, g, b)
-	}
-
-	function getAlpha()
-	{
-		return _alpha
-	}
-
-	function setAlpha(alpha)
-	{
-		_alpha = alpha
-
-		local visibleRow = getVisibleRow()
-		if (visibleRow)
-			visibleRow.setAlpha(alpha)
+			visibleRow.draw.setColor(color)
 	}
 
 	function getFile()
@@ -164,12 +175,17 @@ class GUI.ListVisibleRow extends GUI.Button
 		this.parent = parent
 	}
 
+	function getDataRowId()
+	{
+		return id + parent.scrollbar.range.getValue()
+	}
+
 	function getDataRow()
 	{
 		if (id >= parent.rows.len())
 			return null
 
-		return parent.rows[id + parent.scrollbar.range.getValue()]
+		return parent.rows[getDataRowId()]
 	}
 }
 
@@ -517,16 +533,13 @@ class GUI.List extends GUIListClasses
 			}
 
 			local row = rows[i + scrollbarValue]
-			local color = row.getColor()
-			local drawColor = row.getDrawColor()
 
 			local text = row.getText()
 			if (visibleRows[i].getText() != text)
 				visibleRows[i].setText(text != null ? text : "")
 
-			visibleRows[i].setColor(color.r, color.g, color.b)
-			visibleRows[i].draw.setColor(drawColor.r, drawColor.g, drawColor.b)
-			visibleRows[i].setAlpha(row.getAlpha())
+			visibleRows[i].setColor(row.getColor())
+			visibleRows[i].draw.setColor(row.getDrawColor())
 			visibleRows[i].setFile(row.getFile())
 			visibleRows[i].setFont(row.getFont())
 			visibleRows[i].setDisabled(row.getDisabled())

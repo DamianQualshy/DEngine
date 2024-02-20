@@ -15,12 +15,12 @@ addEventHandler("GUI.onMouseIn", function(self){
 	if(!isCursorVisible()) return;
 
 	if(self instanceof GUI.Button){
-		self.setColor(255, 0, 0);
+		self.setColor({r = 255, g = 0, b = 0});
 		setCursorTxt("L.TGA");
 	}
 
 	if(self instanceof GUI.GridListVisibleCell){
-		self.setColor(132, 0, 255);
+		self.setColor({r = 132, g = 0, b = 255});
 		self.setFile("Menu_Choice_Back.TGA");
 	}
 
@@ -36,12 +36,12 @@ addEventHandler("GUI.onMouseOut", function(self){
 	if(!isCursorVisible()) return;
 
 	if(self instanceof GUI.Button){
-		self.setColor(255, 255, 255);
+		self.setColor({r = 255, g = 255, b = 255});
 		setCursorTxt("LO.TGA");
 	}
 
 	if(self instanceof GUI.GridListVisibleCell){
-		self.setColor(255, 255, 255);
+		self.setColor({r = 255, g = 255, b = 255});
 		self.setFile("");
 	}
 

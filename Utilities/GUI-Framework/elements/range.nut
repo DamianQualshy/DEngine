@@ -150,12 +150,6 @@ class GUI.Range extends GUIRangeClasses
 		indicator.top()
 	}
 
-	function setAlpha(alpha)
-	{
-		GUI.Texture.setAlpha.call(this, alpha)
-		indicator.setAlpha(alpha)
-	}
-
 	function setPositionPx(x, y)
 	{
 		local positionPx = getPositionPx()
@@ -386,7 +380,7 @@ class GUI.Range extends GUIRangeClasses
 
 	function indicator_onMouseDown(self, button)
 	{
-		if (button != MOUSE_LMB)
+		if (button != MOUSE_BUTTONLEFT)
 			return
 
 		local range = self.parent
@@ -395,7 +389,7 @@ class GUI.Range extends GUIRangeClasses
 
 	function onMouseDown(self, button)
 	{
-		if (button != MOUSE_LMB)
+		if (button != MOUSE_BUTTONLEFT)
 			return
 
 		local cursorPosition = getCursorPositionPx()
@@ -404,9 +398,9 @@ class GUI.Range extends GUIRangeClasses
 		ref.activeRange = self.weakref()
 	}
 
-	static function onMouseRelease(button)
+	static function onMouseUp(button)
 	{
-		if (button != MOUSE_LMB)
+		if (button != MOUSE_BUTTONLEFT)
 			return
 
 		if (!ref.activeRange)
@@ -435,5 +429,5 @@ class GUI.Range extends GUIRangeClasses
 	}
 }
 
-addEventHandler("onMouseRelease", GUI.Range.onMouseRelease)
+addEventHandler("onMouseUp", GUI.Range.onMouseUp)
 addEventHandler("onMouseMove", GUI.Range.onMouseMove)

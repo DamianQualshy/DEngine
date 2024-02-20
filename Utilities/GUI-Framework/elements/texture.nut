@@ -45,10 +45,7 @@ class GUI.Texture extends GUITextureClasses
 		rotation = "rotation" in arg ? arg.rotation : rotation
 
 		if ("color" in arg)
-			setColor(arg.color.r, arg.color.g, arg.color.b)
-
-		if ("alpha" in arg)
-			setAlpha(arg.alpha)
+			setColor(arg.color)
 
 		_scaling = "scaling" in arg ? arg.scaling : _scaling
 		_FPS = "FPS" in arg ? arg.FPS : _FPS
@@ -104,14 +101,26 @@ class GUI.Texture extends GUITextureClasses
 		GUI.Event.top.call(this)
 	}
 
-	function getAlpha()
+	function getColor()
 	{
-		return alpha
+		return clone color
 	}
 
-	function setAlpha(alpha)
+	function setColor(color)
 	{
-		this.alpha = alpha
+		local isColorInstance = typeof color == "Color"
+
+		if (isColorInstance || "r" in color)
+			this.color.r = color.r
+
+		if (isColorInstance || "g" in color)
+			this.color.g = color.g
+
+		if (isColorInstance || "b" in color)
+			this.color.b = color.b
+		
+		if (isColorInstance || "a" in color)
+			this.color.a = color.a
 	}
 
 	function setRotation(rotation)

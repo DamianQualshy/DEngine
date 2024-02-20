@@ -160,7 +160,7 @@ function PlayerList::init()
 function PlayerList::registerColumn(name, width)
 {
 	local draw = Draw(0, 0, name)
-	draw.setColor(255, 255, 0)
+	draw.color(255, 255, 0)
 
 	_headers.push({
 		name = name,
@@ -294,6 +294,7 @@ function PlayerList::_updateVisibleRows()
 
 addEventHandler("onInit", function()
 {
+	if(isRemoteNpc(pid)) return;
 	PlayerList.init()
 })
 
@@ -311,6 +312,7 @@ addEventHandler("onPlayerDestroy", function(pid)
 
 addEventHandler("onPlayerChangePing", function(pid, ping)
 {
+	if(isRemoteNpc(pid)) return;
 	local dataRow = PlayerList.playerDataRows[pid]
 	local dataRowIdx = PlayerList.dataRows.find(dataRow)
 
@@ -322,6 +324,7 @@ addEventHandler("onPlayerChangePing", function(pid, ping)
 
 addEventHandler("onPlayerChangeNickname", function(pid, name)
 {
+	if(isRemoteNpc(pid)) return;
 	local dataRow = PlayerList.playerDataRows[pid]
 	local dataRowIdx = PlayerList.dataRows.find(dataRow)
 
@@ -333,6 +336,7 @@ addEventHandler("onPlayerChangeNickname", function(pid, name)
 
 addEventHandler("onPlayerChangeColor", function(pid, r, g, b)
 {
+	if(isRemoteNpc(pid)) return;
 	local dataRow = PlayerList.playerDataRows[pid]
 	local dataRowIdx = PlayerList.dataRows.find(dataRow)
 

@@ -84,10 +84,7 @@ class GUI.ScrollBar extends GUI.Base
 		updateElements(sizePx.width, sizePx.height, positionPx.x, positionPx.y)
 
 		if ("color" in arg)
-			setColor(arg.color.r, arg.color.g, arg.color.b)
-
-		if ("alpha" in arg)
-			setAlpha(arg.apha)
+			setColor(arg.color)
 	}
 
 	function setVisibilityMode(visibilityMode)
@@ -128,25 +125,12 @@ class GUI.ScrollBar extends GUI.Base
 		return range.getColor()
 	}
 
-	function setColor(r, g, b)
+	function setColor(color)
 	{
-		range.setColor(r, g, b)
+		range.setColor(color)
 
-		increaseButton.setColor(r, g, b)
-		decreaseButton.setColor(r, g, b)
-	}
-
-	function getAlpha()
-	{
-		return range.getAlpha()
-	}
-
-	function setAlpha(alpha)
-	{
-		range.setAlpha(alpha)
-
-		increaseButton.setAlpha(alpha)
-		decreaseButton.setAlpha(alpha)
+		increaseButton.setColor(color)
+		decreaseButton.setColor(color)
 	}
 
 	function top()
@@ -306,7 +290,7 @@ class GUI.ScrollBar extends GUI.Base
 
 	static function button_onMouseDown(self, btn)
 	{
-		if (btn != MOUSE_LMB)
+		if (btn != MOUSE_BUTTONLEFT)
 			return
 
 		local scrollBar = self.parent
@@ -326,9 +310,9 @@ class GUI.ScrollBar extends GUI.Base
 		}
 	}
 
-	static function onMouseRelease(btn)
+	static function onMouseUp(btn)
 	{
-		if (btn != MOUSE_LMB)
+		if (btn != MOUSE_BUTTONLEFT)
 			return
 
 		ref.activeScrollBarButton = null
@@ -408,7 +392,7 @@ class GUI.ScrollBar extends GUI.Base
 	}
 }
 
-addEventHandler("onMouseRelease", GUI.ScrollBar.onMouseRelease)
+addEventHandler("onMouseUp", GUI.ScrollBar.onMouseUp)
 addEventHandler("onRender", GUI.ScrollBar.onRender)
 addEventHandler("onKeyDown", GUI.ScrollBar.onKeyDown)
 addEventHandler("onMouseWheel", GUI.ScrollBar.onMouseWheel)

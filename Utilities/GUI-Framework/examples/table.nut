@@ -234,7 +234,7 @@ addEventHandler("GUI.onClick", function(self)
 		return
 
 	foreach (cell in visibleRow.cells)
-		cell.draw.setColor(randomChar(), randomChar(), randomChar())
+		cell.draw.setColor({r = randomChar(), g = randomChar(), b = randomChar()})
 })
 
 addEventHandler("onInit", function()
@@ -249,7 +249,7 @@ addEventHandler("onInit", function()
 		)
 
 		foreach (cell in row.cells)
-			cell.setDrawColor(randomChar(), randomChar(), randomChar())
+			cell.setDrawColor({r = randomChar(), g =  randomChar(), b = randomChar()})
 
 		++ASCIILetter
 	}

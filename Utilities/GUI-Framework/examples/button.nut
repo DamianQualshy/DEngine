@@ -64,7 +64,7 @@ addEventHandler("GUI.onMouseIn", function(self)
 	if (!(self instanceof GUI.Button))
 		return
 
-	self.setColor(255, 0, 0)
+	self.setColor({r = 255, g = 0, b = 0})
 })
 
 addEventHandler("GUI.onMouseOut", function(self)
@@ -72,5 +72,5 @@ addEventHandler("GUI.onMouseOut", function(self)
 	if (!(self instanceof GUI.Button))
 		return
 
-	self.setColor(255, 255, 255)
+	self.setColor({r = 255, g = 255, b = 255})
 })

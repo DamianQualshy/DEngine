@@ -573,9 +573,8 @@ class GUI.CellList extends GUICellListClasses
 			local drawColor = cell.getDrawColor()
 
 			visibleCell.setText(cell.getText())
-			visibleCell.setColor(color.r, color.g, color.b)
+			visibleCell.setColor({r = color.r, g = color.g, b = color.b, a = cell.getAlpha()})
 			visibleCell.draw.setColor(drawColor.r, drawColor.g, drawColor.b)
-			visibleCell.setAlpha(cell.getAlpha())
 			visibleCell.setFile(cell.getFile())
 			visibleCell.setFont(cell.getFont())
 			visibleCell.setDisabled(cell.getDisabled())
