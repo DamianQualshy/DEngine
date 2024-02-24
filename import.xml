@@ -1,13 +1,31 @@
 <server>
-	<import src="server/server.xml" />
+		<!-- Modules -->
+	<module src="Modules/MySQL.x64.dll" type="server" />
 
-	<import src="calendar/calendar.xml" />
+		<!-- Utilities -->
+	<import src="Utilities/import.xml" />
 
-	<import src="animations/animations.xml" />
+		<!-- Server Config -->
+	<import src="Server/import.xml" />
 
-	<import src="chat/chat.xml" />
 
-	<import src="world/world.xml" />
+		<!-- Players -->
+	<import src="Players/import.xml" />
 
-	<import src="players/players.xml" />
+		<!-- NPCs -->
+	<import src="NPCs/import.xml" />
+
+
+		<!-- World -->
+	<import src="World/import.xml" />
+
+		<!-- Admin Panel -->
+	<import src="Admin Control Panel/import.xml" />
+
+		<!-- Chat -->
+	<import src="Chat/import.xml" />
+
+
+		<!-- Server -->
+	<import src="Immersive Khorinis/import.xml" />
 </server>

@@ -1,0 +1,4 @@
+<server>
+	<script src="Init_Server.nut" type="server" />
+	<script src="Init_Client.nut" type="client" />
+</server>
