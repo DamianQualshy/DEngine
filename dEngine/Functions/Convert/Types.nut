@@ -1,8 +1,8 @@
 function toBool(argument){
 	switch(typeof(argument)){
 		case "integer":
-			if(argument == 0) return false;
-			if(argument == 1) return true;
+			if(argument <= 0) return false;
+			if(argument >= 1) return true;
 		break;
 		case "string":
 			if(argument == "false") return false;
