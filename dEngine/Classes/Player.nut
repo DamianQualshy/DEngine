@@ -46,21 +46,11 @@ class Player {
 	sneaking = -1;
 	picklock = -1;
 	pickpocket = -1;
-	runes = -1;
+	runemaking = -1;
 	alchemy = -1;
 	smithing = -1;
 	trophies = -1;
 	acrobatic = -1;
-
-	profession = -1;
-	profession_level = -1;
-	profession_exp = -1;
-
-	mining = -1;
-	hunting = -1;
-	herbalism = -1;
-
-	stamina = -1;
 
 	walk = "HUMANS.MDS";
 	visual = {
@@ -69,21 +59,23 @@ class Player {
 		hm = "HUM_HEAD_PONY",
 		ht = 18
 	};
-	scale = { x = 1.0, y = 1.0, z = 1.0, f = 1.0 };
-	pos = { x = 0.0, y = 0.0, z = 0.0, a = 0.0 };
+	scale = {
+		x = 1.0,
+		y = 1.0,
+		z = 1.0,
+		f = 1.0
+	};
 
 	world = "";
 	virtual_world = -1;
+	pos = {
+		x = 0.0,
+		y = 0.0,
+		z = 0.0,
+		a = 0.0
+	};
 
 	inventory = {};
-
-	excavating = -1;
-	gathering = -1;
-	salvaging = -1;
-	resting = -1;
-
-	gained_exp = -1;
-	ck = -1;
 
 	logged = -1;
 	afk = -1;
@@ -385,5 +377,191 @@ class Player {
 	}
 
 
+	function setSneakTalent(arg){
+		this.sneaking = convert(arg, "bool");
 
+		setPlayerTalent(this.id, TALENT_SNEAK, this.sneaking);
+	}
+
+	function getSneakTalent(){
+		return this.sneak;
+	}
+
+
+	function setPicklockTalent(arg){
+		this.picklock = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_PICKLOCK, this.picklock);
+	}
+
+	function getPicklockTalent(){
+		return this.picklock;
+	}
+
+
+	function setPickpocketTalent(arg){
+		this.pickpocket = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_PICKPOCKET, this.pickpocket);
+	}
+
+	function getPickpocketTalent(){
+		return this.pickpocket;
+	}
+
+
+	function setRunemakingTalent(arg){
+		this.runemaking = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_RUNES, this.runemaking);
+	}
+
+	function getRunemakingTalent(){
+		return this.runemaking;
+	}
+
+
+	function setAlchemyTalent(arg){
+		this.alchemy = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_ALCHEMY, this.alchemy);
+	}
+
+	function getAlchemyTalent(){
+		return this.alchemy;
+	}
+
+
+	function setSmithingTalent(arg){
+		this.smithing = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_SMITH, this.smithing);
+	}
+
+	function getSmithingTalent(){
+		return this.smithing;
+	}
+
+
+	function setTrophiesTalent(arg){
+		this.trophies = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_THROPHY, this.trophies);
+	}
+
+	function getTrophiesTalent(){
+		return this.trophies;
+	}
+
+
+	function setAcrobaticTalent(arg){
+		this.acrobatic = convert(arg, "bool");
+
+		setPlayerTalent(this.id, TALENT_ACROBATIC, this.acrobatic);
+	}
+
+	function getAcrobaticTalent(){
+		return this.acrobatic;
+	}
+
+
+	function setWalkstyle(walk){
+		this.walk = convert(walk, "string");
+
+		applyPlayerOverlay(this.id, Mds.id(this.walk));
+	}
+
+	function resetWalkstyle(){
+		removePlayerOverlay(this.id, Mds.id(this.walk));
+
+		this.walk = "HUMANS.MDS"
+	}
+
+	function getwalkstyle(){
+		return this.walk;
+	}
+
+
+	function setVisual(bodyModel, bodyTexture, headModel, headTexture){
+		this.visual = {
+			bm = convert(bodyModel, "string"),
+			bt = convert(bodyTexture, "integer"),
+			hm = convert(headModel, "string"),
+			ht = convert(headTexture, "integer")
+		};
+
+		setPlayerVisual(this.id, this.visual.bm, this.visual.bt, this.visual.hm, this.visual.ht);
+	}
+
+	function getVisual(){
+		return this.visual;
+	}
+
+
+	function setScale(x, y, z, fatness){
+		this.scale = {
+			x = convert(x, "float"),
+			y = convert(y, "float"),
+			z = convert(z, "float"),
+			f = convert(f, "float")
+		};
+
+		setPlayerScale(this.id, this.scale.x, this.scale.y, this.scale.z);
+		setPlayerFatness(this.id, this.scale.f);
+	}
+
+	function getScale(){
+		return this.scale;
+	}
+
+
+	function setWorld(world){
+		if (this.world !=  world){
+			this.world = convert(world, "string");
+
+			setPlayerWorld(this.id, this.world);
+		}
+	}
+
+	function getWorld(){
+		return this.world;
+	}
+
+
+	function setVirtualWorld(vworld){
+		this.virtual_world = convert(vworld, "integer");
+
+		setPlayerVirtualWorld(this.id, this.virtual_world);
+	}
+
+	function getVirtualWorld(){
+		return this.virtual_world;
+	}
+
+
+	function setPosition(x, y, z, angle){
+		this.pos = {
+			x = convert(x, "float"),
+			y = convert(y, "float"),
+			z = convert(z, "float"),
+			a = convert(a, "float")
+		};
+
+		setPlayerPosition(this.id, this.pos.x, this.pos.y, this.pos.z);
+		setPlayerAngle(this.id, this.pos.a);
+	}
+
+	function getPosition(){
+		local gamepos = getPlayerPosition(this.id);
+		local gameang = getPlayerAngle(this.id)
+
+		this.pos = {
+			x = convert(gamepos.x, "float"),
+			y = convert(gamepos.y, "float"),
+			z = convert(gamepos.z, "float"),
+			a = convert(gameang, "float")
+		};
+
+		return this.pos;
+	}
 }
