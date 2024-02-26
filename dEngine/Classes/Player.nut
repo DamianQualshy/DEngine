@@ -19,10 +19,8 @@ class Player {
 	};
 
 	name = "";
-	description = "";
 
 	instance = "";
-	class_id = -1;
 	guild = -1;
 
 	level = -1;
@@ -188,30 +186,12 @@ class Player {
 	}
 
 
-	function setDescription(description){
-		this.description = convert(description, "string");
-	}
-
-	function getDescription(){
-		return this.description;
-	}
-
-
 	function setInstance(instance){
 		this.instance = convert(instance, "string");
 	}
 
 	function getInstance(){
 		return this.instance;
-	}
-
-
-	function setClass(id){
-		this.class_id = convert(id, "integer");
-	}
-
-	function getClass(){
-		return this.class_id;
 	}
 
 
@@ -563,5 +543,21 @@ class Player {
 		};
 
 		return this.pos;
+	}
+
+
+	function isLogged(){
+		return this.logged;
+	}
+
+
+	function setInvisible(state){
+		this.invisible = convert(state, "bool");
+
+		setPlayerInvisible(this.id, this.invisible);
+	}
+
+	function getInvisible(){
+		return this.invisible;
 	}
 }
