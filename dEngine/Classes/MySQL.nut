@@ -1,3 +1,11 @@
+local database = {
+	host = "localhost",
+	user = "root",
+	pass = "",
+	db = "immersivekhorinis",
+	port = 3306
+}
+
 local connection;
 
 class MySQL {
