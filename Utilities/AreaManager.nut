@@ -1,29 +1,48 @@
 class Area
 {
-	name = null
-	world = null
-
-	isChunk = null
-
 	points = null
 
 	minY = null
 	maxY = null
 
+	bbox = null
+
+	world = null
+
 	constructor(arg)
 	{
-		name = arg.name
 		points = arg.points
 		world = arg.world.toupper()
-
-		if("isChunk" in arg)
-			isChunk = arg.isChunk
 
 		if ("minY" in arg)
 			minY = arg.minY
 
 		if ("maxY" in arg)
 			maxY = arg.maxY
+
+		local pointsCount = points.len()
+
+		if (pointsCount < 1)
+			return
+
+		bbox = {minX = points[0].x, maxX = points[0].x, minZ = points[0].z, maxZ = points[0].z}
+
+		for (local i = 1; i < pointsCount; ++i)
+		{
+			local point = points[i]
+
+			if (bbox.minX > point.x)
+				bbox.minX = point.x
+
+			if (bbox.maxX < point.x)
+				bbox.maxX = point.x
+
+			if (bbox.minZ > point.z)
+				bbox.minZ = point.z
+
+			if (bbox.maxZ < point.z)
+				bbox.maxZ = point.z
+		}
 	}
 
 	function isIn(x, y, z, world)
@@ -33,6 +52,10 @@ class Area
 
 		if (minY != null && maxY != null
 			&& y > maxY || y < minY)
+			return false
+
+		if (bbox != null
+			&& (x < bbox.minX || x > bbox.maxX || z < bbox.minZ || z > bbox.maxZ))
 			return false
 
 		local pointsCount = points.len()
@@ -53,11 +76,15 @@ class Area
 	}
 }
 
+
 AreaManager <- {
 	worlds = {}
+
+	enterCallbacks = {}
+	exitCallbacks = {}
 }
 
-function AreaManager::add(area)
+function AreaManager::add(area, onEnter, onExit)
 {
 	if (!(area.world in worlds))
 		worlds[area.world] <- []
@@ -68,6 +95,9 @@ function AreaManager::add(area)
 	if (idx == null)
 	{
 		areas.push(area)
+
+		enterCallbacks[area] <- onEnter
+		exitCallbacks[area] <- onExit
 
 		return true
 	}
@@ -84,6 +114,9 @@ function AreaManager::remove(area)
 	{
 		areas.remove(idx)
 
+		delete enterCallbacks[area]
+		delete exitCallbacks[area]
+
 		return true
 	}
 
@@ -97,7 +130,9 @@ if (CLIENT_SIDE)
 	function AreaManager::process()
 	{
 		local heroWorld = getWorld()
-		if(!(heroWorld in worlds)) return;
+
+		if (!(heroWorld in worlds))
+			return
 
 		local areas = worlds[heroWorld]
 		local heroPosition = getPlayerPosition(heroId)
@@ -109,12 +144,12 @@ if (CLIENT_SIDE)
 			if (!(area in heroAreas) && isIn)
 			{
 				heroAreas[area] <- true
-				callEvent("onEnterZone", area);
+				enterCallbacks[area]()
 			}
 			else if ((area in heroAreas) && !isIn)
 			{
 				delete heroAreas[area]
-				callEvent("onExitZone", area);
+				exitCallbacks[area]()
 			}
 		}
 	}
@@ -131,11 +166,13 @@ else if (SERVER_SIDE)
 	{
 		for (local pid = 0, end = getMaxSlots(); pid < getMaxSlots(); ++pid)
 		{
-			if(!isPlayerConnected(pid)) continue;
-			if(!isPlayerSpawned(pid)) continue;
+			if (!isPlayerSpawned(pid))
+				continue
 
 			local playerWorld = getPlayerWorld(pid)
-				if (!(playerWorld in worlds)) continue;
+
+			if (!(playerWorld in worlds))
+				continue
 
 			local areas = worlds[playerWorld]
 
@@ -149,18 +186,19 @@ else if (SERVER_SIDE)
 				if (!(area in playerAreas) && isIn)
 				{
 					playerAreas[area] <- true
-					callEvent("onPlayerEnterZone", pid, area);
+					enterCallbacks[area](pid)
 				}
 				else if ((area in playerAreas) && !isIn)
 				{
 					delete playerAreas[area]
-					callEvent("onPlayerExitZone", pid, area);
+					exitCallbacks[area](pid)
 				}
 			}
 		}
 	}
 }
 
-setTimer(function(){
+setTimer(function()
+{
 	AreaManager.process()
 }, 500, 0)
