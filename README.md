@@ -10,10 +10,10 @@ It doesn't require any outside modules or frameworks, since it already contains:
 
 ## Features
 - Player Class
-- NPC Class
 - Journal
 
 ### To-Do
+- NPC Class
 - Chat
 - Admin Commands
 - Moderator Commands
@@ -32,7 +32,6 @@ It doesn't require any outside modules or frameworks, since it already contains:
 - Seasons
 - Autosave
 - Check for changes in MySQL
-- Server-side NPCs
 - Damage System
 - Server-side Inventory
 - Placing down NPCs in-game
