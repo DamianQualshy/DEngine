@@ -2,10 +2,17 @@
 		<!-- Modules -->
 	<module src="Modules/MySQL.x64.dll" type="server" />
 
+		<!-- Constants -->
+	<script src="Constants/G2Constants.nut" type="shared" />
+
 		<!-- Packets -->
 	<script src="Packets/PacketMessage/Hero.nut" type="shared" />
 	<script src="Packets/Hero/server.nut" type="server" />
 	<script src="Packets/Hero/client.nut" type="client" />
+
+	<script src="Packets/PacketMessage/Journal.nut" type="shared" />
+	<script src="Packets/Journal/server.nut" type="server" />
+	<script src="Packets/Journal/client.nut" type="client" />
 
 		<!-- Classes -->
 	<script src="Classes/File.nut" type="server" />
@@ -13,6 +20,7 @@
 	<script src="Classes/Chat.nut" type="client" />
 	<script src="Classes/PrototypeHero.nut" type="server" />
 	<script src="Classes/Player.nut" type="server" />
+	<script src="Classes/NPC.nut" type="server" />
 	<script src="Classes/Inventory.nut" type="server" />
 	<script src="Classes/Item.nut" type="server" />
 
@@ -31,9 +39,14 @@
 
 	<script src="Functions/Player/Init.nut" type="server" />
 
+	<script src="Functions/NPC/Create.nut" type="server" />
+
 		<!-- Callbacks -->
 	<script src="Callbacks/Players/Count.nut" type="server" />
 	<script src="Callbacks/Players/Distance.nut" type="server" />
 
 	<script src="Callbacks/Server/Information.nut" type="server" />
+
+		<!-- Daedalus -->
+	<script src="Daedalus/Journal/Log.nut" type="server" />
 </server>
