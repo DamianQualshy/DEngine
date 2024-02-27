@@ -9,7 +9,7 @@ class PrototypeHero {
 
 	name = "";
 
-	instance = "";
+	instance = "PC_HERO";
 	guild = -1;
 
 	level = -1;
@@ -53,7 +53,7 @@ class PrototypeHero {
 		f = 1.0
 	};
 
-	world = "";
+	world = "NEWWORLD\\NEWWORLD.ZEN";
 	virtual_world = -1;
 	pos = {
 		x = 0.0,
@@ -434,7 +434,7 @@ class PrototypeHero {
 
 
 	function setWorld(world){
-		if (this.world !=  world){
+		if (this.world != world){
 			this.world = convert(world, "string");
 
 			setPlayerWorld(this.id, this.world);
@@ -488,13 +488,15 @@ class PrototypeHero {
 	function init(id){
 		this.id = id;
 
+		spawnPlayer(this.id);
+
 		this.setName(getPlayerName(id));
 
 		this.setInstance(getPlayerInstance(id));
 		this.setGuild(2)
 
 		this.setLevel(100)
-		this.setExperience(250 * this.getLevel())
+		this.setExperience(250 * pow(this.getLevel(), 2))
 		this.setLearnPoints(10 * this.getLevel());
 
 		this.setHealth(1000);
