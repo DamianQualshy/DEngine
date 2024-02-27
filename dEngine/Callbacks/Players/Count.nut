@@ -1,4 +1,4 @@
-function getNPCCount(){
+/* function getNPCCount(){
 	local totalNPCs = 0;
 	foreach(npc in NPCs){
 		++totalNPCs;
@@ -20,4 +20,4 @@ function getPlayerCountOnMap(world_name){
 		if(player.getWorld() == world_name) ++totalPlayers;
 	}
 	return totalPlayers;
-}
+} */
