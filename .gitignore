@@ -6,6 +6,7 @@ waypoints/*
 bans.xml
 config.xml
 mds.xml
+data.xml
 
 server.log
 
