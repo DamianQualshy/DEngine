@@ -10,21 +10,15 @@ It doesn't require any outside modules or frameworks, since it already contains:
 
 ## Features
 - Player Class
+- NPC Class
+- Journal
 
 ### To-Do
-- RolePlay Chat
+- Chat
 - Admin Commands
 - Moderator Commands
-- Leader Commands
 - Player Commands
-- Character Development
-- Picking Herbs/Salvaging Animals
 - NPC AI
-- Trading
-- Crafting
-- Houses
-- Loot
-- Player and NPC rank classes
 - Primitive Calendar
 - Character Creator
 - Login/Register
@@ -32,8 +26,6 @@ It doesn't require any outside modules or frameworks, since it already contains:
 - Animation Window
 - Discord Activity
 - Locations/Zones with restrictions
-- Server-side Synchronized Statistics Window
-- Mining
 - Server-side Items
 - Save/Load Server Data with MySQL
 - Map split into Chunks
@@ -44,28 +36,20 @@ It doesn't require any outside modules or frameworks, since it already contains:
 - Damage System
 - Server-side Inventory
 - Placing down NPCs in-game
-- Character Kill system
 
 #### Possible Features
 - Quests
-- Journal
 - Dialogues
 - Pickpocket
 - Lockpicking
 - Arena
 
-#### Needed functions
-- God Mode command
-- Temporary God Mode after Teleport (via command)
-- Alternative weapon animations
-- Manipulate chunk data in-game
-
 #### Optional functions
+- Manipulate chunk data in-game
 - GUI Creator in real time
 - World Builder
 - Admin Panel using GUI
 - Teleportation between locations using GUI
-- Camera showcase during Login time
 - Itempedia in Admin Panel
 - Server-side Game Menu
 - Chat split into Categories
