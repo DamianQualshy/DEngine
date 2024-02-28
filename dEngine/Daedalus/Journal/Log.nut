@@ -14,6 +14,14 @@ function Log_AddEntry(pid, topicName, entry){
 	addEntry.send(pid, RELIABLE_ORDERED);
 }
 
+function B_LogEntry(pid, topicName, entry){
+	local logEntry = JournalMessage_LogEntry(pid,
+		topicName,
+		entry
+		).serialize();
+	logEntry.send(pid, RELIABLE_ORDERED);
+}
+
 function Log_SetTopicStatus(pid, topicName, status){
 	local setTopicStatus = JournalMessage_SetTopicStatus(pid,
 		topicName,
