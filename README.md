@@ -1,7 +1,9 @@
 # Drakania Engine
 Drakania Engine is a collective of scripts, intended to help new scripters with making their own servers for Gothic 2 Online.
 
-It doesn't require any outside modules or frameworks, since it already contains:
+The package aims to contain functions from Gothic 2, synchronizing the information between client and server in a vanilla-friendly way. That means, for example, if you don't want to create your own GUIs, you can just use the one that already exists on client-side in base game.
+
+dEngine doesn't require any outside modules or frameworks, since it already contains:
 - Patrix's GUI Framework
 - Patrix's MySQL Module
 - Bimbol's Packet Serialization
@@ -23,7 +25,6 @@ It doesn't require any outside modules or frameworks, since it already contains:
 - Character Creator
 - Login/Register
 - Save/Load Client Data with MySQL
-- Animation Window
 - Discord Activity
 - Locations/Zones with restrictions
 - Server-side Items
