@@ -1,9 +1,13 @@
+/////////////////////////////////////////
+///	Line types
+/////////////////////////////////////////
+
 local ChatLine = class
 {
 	constructor(r, g, b, text)
 	{
 		_line = Draw(0, 0, text)
-		_line.setColor({r = r, g = g, b = b})
+		_line.color.set(r, g, b)
 	}
 
 	function getVisible()
@@ -23,7 +27,7 @@ local ChatLine = class
 
 	function setAlpha(alpha)
 	{
-		_line.alpha = alpha
+		_line.color.a = alpha
 	}
 
 	function heightPx()
@@ -43,7 +47,7 @@ local ChatPlayerLine = class extends ChatLine
 
 		local color = getPlayerColor(pid)
 		_nickname = Draw(0, 0, getPlayerName(pid) + ": ")
-		_nickname.setColor({r = color.r, g = color.g, b = color.b})
+		_nickname.color.set(color.r, color.g, color.b)
 	}
 
 	function getVisible()
@@ -66,7 +70,7 @@ local ChatPlayerLine = class extends ChatLine
 	function setAlpha(alpha)
 	{
 		base.setAlpha(alpha)
-		_nickname.alpha = alpha
+		_nickname.color.a = alpha
 	}
 
 	function heightPx()
@@ -76,6 +80,10 @@ local ChatPlayerLine = class extends ChatLine
 
 	_nickname = null
 }
+
+/////////////////////////////////////////
+///	Chat
+/////////////////////////////////////////
 
 Chat <- {
 	x = 5,
@@ -90,8 +98,10 @@ Chat <- {
 	_historySize = 50,
 	_location = 0,
 
-	_inputHistory = queue(),
-	_inputHistorySize = 5,
+	_localStorageAvailable = "LocalStorage" in getroottable(),
+
+	_inputHistory = [],
+	_inputHistorySize = 10,
 	_inputHistoryLocation = 0,
 
 	_moveLinesAnimationBeginTime = -1
@@ -184,7 +194,6 @@ function Chat::_calcPosition()
 function Chat::clear()
 {
 	_lines.clear()
-	_calcPosition()
 }
 
 function Chat::setHistorySize(historySize)
@@ -289,7 +298,10 @@ function Chat::pushInputHistoryMessage(message)
 	_inputHistory.push(message)
 
 	if (_inputHistory.len() > _inputHistorySize)
-		_inputHistory.pop()
+		_inputHistory.remove(0)
+
+	if (_localStorageAvailable)
+		LocalStorage.setItem("chatInputHistory", _inputHistory)
 }
 
 function Chat::loadInputHistoryMessage(newLocation)
@@ -340,9 +352,16 @@ function Chat::showLineAnimation(line, now)
 	}
 }
 
+/////////////////////////////////////////
+///	Events
+/////////////////////////////////////////
+
 addEventHandler("onInit", function()
 {
 	Chat._calcPosition()
+
+	if (Chat._localStorageAvailable)
+		Chat._inputHistory = LocalStorage.getItem("chatInputHistory") || []
 })
 
 addEventHandler("onRender", function()
@@ -401,6 +420,7 @@ addEventHandler("onKeyDown", function(key)
 		case KEY_ESCAPE:
 			chatInputClose()
 			disableControls(false)
+			cancelEvent()
 			break
 
 		default:
@@ -413,26 +433,65 @@ addEventHandler("onKeyDown", function(key)
 		switch (key)
 		{
 		case KEY_T:
-				if (!isConsoleOpen() && Chat.visible)
-				{
-					chatInputOpen()
-					disableControls(true)
-				}
+			if (!isConsoleOpen() && Chat.visible)
+			{
+				chatInputOpen()
+				disableControls(true)
+			}
 			break
 		case KEY_SLASH:
-				if (!isConsoleOpen() && Chat.visible)
-				{
-					chatInputOpen()
-					chatInputSetText("/");
-					disableControls(true)
-				}
-			break
+			if (!isConsoleOpen() && Chat.visible)
+			{
+				chatInputOpen()
+				chatInputSetText("/")
+				disableControls(true)
+			}
+		break
 
 		case KEY_F7:
 			Chat.setVisible(!Chat.visible)
 			break
 		}
 	}
+})
+
+addEventHandler("onCommand", function(cmd, param)
+{
+	switch (cmd)
+	{
+		case "chatclear":
+			Chat.clear()
+			break
+
+		case "chatlines":
+			try
+				param = param.tointeger()
+			catch (msg)
+				return
+
+			Chat.setMaxLines(param)
+			break
+
+		case "chatlimit":
+			try
+				param = param.tointeger()
+			catch (msg)
+				return
+
+			Chat.setHistorySize(param)
+			break
+
+		case "chatinputlimit":
+			try
+				param = param.tointeger()
+			catch (msg)
+				return
+
+			Chat.setInputHistorySize(param)
+			break
+	}
+
+	Chat.pushInputHistoryMessage("/" + cmd + ((param == "") ? "" : " " + param))
 })
 
 addEventHandler("onMouseWheel", function(direction)
