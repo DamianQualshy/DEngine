@@ -12,10 +12,10 @@ dEngine doesn't require any outside modules or frameworks, since it already cont
 
 ## Features
 - Player Class
+- NPC Class
 - Journal
 
 ### To-Do
-- NPC Class
 - Chat
 - Admin Commands
 - Moderator Commands
@@ -48,10 +48,8 @@ dEngine doesn't require any outside modules or frameworks, since it already cont
 - Manipulate chunk data in-game
 - GUI Creator in real time
 - World Builder
-- Admin Panel using GUI
+- GUI Admin Panel
 - Teleportation between locations using GUI
-- Itempedia in Admin Panel
-- Server-side Game Menu
 - Chat split into Categories
 - White-List
 
