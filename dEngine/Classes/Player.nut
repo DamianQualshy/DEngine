@@ -18,12 +18,12 @@ class Player extends PrototypeHero {
 	whitelist = -1;
 
 
-		constructor(id){
+		constructor(id, params){
 			this.serial = getPlayerSerial(id);
 			this.mac = getPlayerMacAddr(id);
 			this.ip = getPlayerIP(id);
 
-			this.init(id);
+			this.init(id, params);
 
 			Players[this.id] <- this;
 			this.inventory = Inventory(id);
