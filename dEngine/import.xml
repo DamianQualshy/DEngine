@@ -4,11 +4,18 @@
 
 		<!-- Constants -->
 	<script src="Constants/G2Constants.nut" type="shared" />
+	<script src="Constants/Creator.nut" type="shared" />
+
+		<!-- Tables -->
+	<script src="Tables/Creator.nut" type="shared" />
 
 		<!-- Packets -->
-	<script src="Packets/PacketMessage/Hero.nut" type="shared" />
-	<script src="Packets/Hero/server.nut" type="server" />
-	<script src="Packets/Hero/client.nut" type="client" />
+	<script src="Packets/PacketMessage/Hero/Stats.nut" type="shared" />
+	<script src="Packets/Hero/Stats/server.nut" type="server" />
+	<script src="Packets/Hero/Stats/client.nut" type="client" />
+	<script src="Packets/PacketMessage/Hero/Creator.nut" type="shared" />
+	<script src="Packets/Hero/Creator/server.nut" type="server" />
+	<script src="Packets/Hero/Creator/client.nut" type="client" />
 
 	<script src="Packets/PacketMessage/Journal.nut" type="shared" />
 	<script src="Packets/Journal/server.nut" type="server" />
@@ -37,9 +44,15 @@
 	<script src="Functions/Log/server.nut" type="server" />
 	<script src="Functions/Log/client.nut" type="client" />
 
+	<script src="Functions/Player/Login/client.nut" type="client" />
+	<script src="Functions/Player/Creator/client.nut" type="client" />
 	<script src="Functions/Player/Init.nut" type="server" />
 
 	<script src="Functions/NPC/Create.nut" type="server" />
+
+	<script src="Functions/Chat/GlobalChat.nut" type="server" />
+
+	<script src="Functions/DiscordActivity/client.nut" type="client" />
 
 		<!-- Callbacks -->
 	<script src="Callbacks/Players/Count.nut" type="server" />
@@ -48,5 +61,4 @@
 	<script src="Callbacks/Server/Information.nut" type="server" />
 
 		<!-- Daedalus -->
-	<script src="Daedalus/Journal/Log.nut" type="server" />
 </server>
