@@ -26,6 +26,8 @@
 	<script src="elements/slider.nut" type="client" />
 	<script src="elements/scrollbar.nut" type="client" />
 	<script src="elements/input.nut" type="client" />
+	<script src="elements/input.number.nut" type="client" />
+	<script src="elements/input.password.nut" type="client" />
 	<script src="elements/collection.nut" type="client" />
 	<script src="elements/window.nut" type="client" />
 	<script src="elements/tabpanel.nut" type="client" />
@@ -34,4 +36,6 @@
 	<script src="elements/table.nut" type="client" />
 	<script src="elements/note.nut" type="client" />
 	<script src="elements/dropdownlist.nut" type="client" />
+	<script src="elements/contextMenu.nut" type="client" />
+	<script src="elements/grid.nut" type="client" />
 </server>

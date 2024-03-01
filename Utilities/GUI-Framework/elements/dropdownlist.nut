@@ -11,6 +11,7 @@ class GUI.DropDownList extends GUI.Button
 #private:
 	_maxHeightPx = 0
 	_selectedIndex = -1
+	_placeHolder = ""
 
 	constructor(arg = null)
 	{
@@ -35,8 +36,22 @@ class GUI.DropDownList extends GUI.Button
 		if ("selectedIndex" in arg)
 			setSelectedIndex(arg.selectedIndex)
 
+		_placeHolder = ("placeHolder" in arg) ? (arg.placeHolder) : (draw != null ? draw.getText() : _placeHolder)
 		this.bind(EventType.Click, onClick)
 		updateVisibleElements()
+	}
+
+	function getPlaceHolder()
+	{
+		return _placeHolder
+	}
+
+	function setPlaceHolder(placeHolder)
+	{
+		_placeHolder = placeHolder
+
+		if (_selectedIndex == -1)
+			setText(placeHolder)
 	}
 
 	function setPositionPx(x, y)
@@ -53,7 +68,7 @@ class GUI.DropDownList extends GUI.Button
 
 	function setSizePx(width, height)
 	{
-		base.setSizePx(x, y)
+		base.setSizePx(width, height)
 		updateVisibleElements()
 	}
 
@@ -116,20 +131,20 @@ class GUI.DropDownList extends GUI.Button
 	function setVisible(toggle)
 	{
 		if (!toggle && list.getVisible())
-			list.setVisible(false)
+			toggleOpen()
 
 		base.setVisible(toggle)
 	}
 
 	function insertRow(rowId, arg)
 	{
-		if (list.rows.len() == 1)
-			setSelectedIndex(0)
-
 		local row = list.insertRow(rowId, arg)
 		if (list.rows.len() <= list.visibleRows.len())
 			updateTexture()
 			
+		if (list.rows.len() == 1)
+			setSelectedIndex(0)
+
 		return row
 	}
 
@@ -140,7 +155,7 @@ class GUI.DropDownList extends GUI.Button
 
 	function removeRow(rowId)
 	{
-		if (list.rows.len() == 1)
+		if (list.rows.len() == 1 || rowId == _selectedIndex)
 			setSelectedIndex(-1)
 
 		list.removeRow(rowId)
@@ -164,7 +179,7 @@ class GUI.DropDownList extends GUI.Button
 	function setSelectedIndex(selectedIndex)
 	{
 		_selectedIndex = selectedIndex
-		setText(_selectedIndex != -1 ? getSelectedRow().getText() : "")
+		setText(_selectedIndex != -1 ? getSelectedRow().getText() : _placeHolder)
 	}
 
 	function getSelectedRow()
@@ -177,12 +192,12 @@ class GUI.DropDownList extends GUI.Button
 
 	function toggleOpen()
 	{
-		if (!_visible)
-			return
-
 		local visible = !list.getVisible()
 		list.setVisible(visible)
 		ref.activeDropdownList = visible ? this.weakref() : null
+
+		if (visible && list.scrollbar.range.getMaximum() > 0)
+			GUI.ScrollBar.setActiveScrollbar(Orientation.Vertical, list.scrollbar)
 	}
 
 	function updateTexture()
@@ -205,10 +220,11 @@ class GUI.DropDownList extends GUI.Button
 		local sizePx = getSizePx()
 		local margin = list.getMarginPx()
 		local rowHeight = list.getRowHeightPx()
-		local rowSpace = rowHeight + list.getRowSpacingPx()
+		local rowSpacing = list.getRowSpacingPx()
+		local rowSize = rowHeight + rowSpacing
 		local rowsLen = list.rows.len()
+		local visibleRowsLen = (rowHeight > 0) ? ((_maxHeightPx - margin.top - margin.bottom + rowSpacing) / rowSize) : 0
 
-		local visibleRowsLen = (_maxHeightPx - margin.top - margin.bottom) / rowSpace
 		list._visibleRowsCount = visibleRowsLen <= rowsLen ? visibleRowsLen : rowsLen
 
 		// Insert visibleRows loop:
@@ -235,7 +251,7 @@ class GUI.DropDownList extends GUI.Button
 		local scrollbar = list.scrollbar
 		local scrollbarWidth = scrollbar.getSizePx().width
 		scrollbar.setPositionPx((positionPx.x + sizePx.width - scrollbarWidth), newPosY)
-		scrollbar.setSizePx(scrollbarWidth, (rowSpace * visibleRowsLen) + margin.top + margin.bottom)
+		scrollbar.setSizePx(scrollbarWidth, (rowSize * visibleRowsLen) + margin.top + margin.bottom)
 
 		//  Update visible rows:
 		local newPosX = positionPx.x + margin.left
@@ -244,7 +260,7 @@ class GUI.DropDownList extends GUI.Button
 		{
 			visibleRow.setPositionPx(newPosX, newPosY)
 			visibleRow.setSizePx(rowWidth, rowHeight)
-			newPosY += rowSpace
+			newPosY += rowSize
 		}
 
 		updateTexture()
@@ -301,9 +317,29 @@ class GUI.DropDownList extends GUI.Button
 		local elementPointedByCursor = GUI.Event.getElementPointedByCursor()
 		if (elementPointedByCursor)
 		{
-			if (elementPointedByCursor == ref.activeDropdownList
-			|| elementPointedByCursor.parent && elementPointedByCursor.parent.parent == ref.activeDropdownList)
+			if (elementPointedByCursor == ref.activeDropdownList)
 				return
+
+			if (elementPointedByCursor.parent)
+			{
+				local parent = elementPointedByCursor.parent
+				if (parent.parent)
+				{
+					local parent = parent.parent
+					if (parent == ref.activeDropdownList)
+						return
+
+					local scrollbar = ref.activeDropdownList.list.scrollbar
+					if (parent == scrollbar)
+						return
+
+					if (parent == scrollbar.increaseButton)
+						return
+
+					if (parent == scrollbar.decreaseButton)
+						return
+				}
+			}
 		}
 
 		ref.activeDropdownList.toggleOpen()

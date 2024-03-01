@@ -81,6 +81,7 @@ local DataLine = class
 	}
 }
 
+
 local GUINoteClasses = classes(GUI.Texture, GUI.Margin, GUI.Alignment)
 class GUI.Note extends GUINoteClasses
 {
@@ -91,6 +92,7 @@ class GUI.Note extends GUINoteClasses
 	_separator = " "
 	_isWordsPerLine = true
 	_text = ""
+	_scale = null
 
 #public:
 	visibleLines = null
@@ -117,6 +119,7 @@ class GUI.Note extends GUINoteClasses
 		_separator = "separator" in arg ? arg.separator : _separator
 		_isWordsPerLine = "isWordsPerLine" in arg ? arg.isWordsPerLine : _isWordsPerLine
 		_text = "text" in arg ? arg.text : _text
+		_scale = "scale" in arg ? arg.scale : {x = 1.0, y = 1.0}
 
 		GUI.Margin.constructor.call(this, arg)
 		_alignment = "align" in arg ? arg.align : Align.Left
@@ -135,162 +138,8 @@ class GUI.Note extends GUINoteClasses
 			scrollbar.setSizePx(SCROLLBAR_SIZE, 0)
 
 		GUI.Texture.constructor.call(this, arg)
-
 		updateScrollbar()
 		updateVisibleLines()
-		updateLines()
-	}
-
-	function updateLines()
-	{
-		local oldFont = textGetFont()
-		local textLen = _text.len()
-		lines.clear()
-
-		if (!textLen)
-		{
-			scrollbar.range.setMaximum(0)
-			updateScrollbarVisibility()
-			refresh()
-			return
-		}
-
-		textSetFont(_font)
-		local marginPx = getMarginPx()
-		local maxLineWidthPx = getSizePx().width - marginPx.right - marginPx.left
-
-		local curLineText = ""
-		local curLineWidthPx = 0
-
-		for (local curTextId = 0, textLen = textLen; curTextId < textLen; ++curTextId)
-		{
-			local curTextAsciiCode = _text[curTextId]
-			local curTextLetter = curTextAsciiCode.tochar().tostring()
-			local curTextLetterWidthPx = textWidthPx(curTextLetter)
-
-			if (curTextAsciiCode == '\n')
-			{
-				lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
-				curLineText = ""
-				curLineWidthPx = 0
-			}
-			else if (curLineWidthPx >= maxLineWidthPx)
-			{
-				if (!_isWordsPerLine)
-				{
-					lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
-					curLineText = ""
-					curLineWidthPx = 0
-				}
-				else
-				{
-					local foundSeparator = false
-					local newLineText = ""
-					local newLineWidthPx = 0
-
-					for (local newLineId = curLineText.len() - 1; newLineId >= 0; --newLineId)
-					{
-						local newLineLetter = curLineText[newLineId].tochar().tostring()
-						local newLineLetterWidthPx = textWidthPx(newLineLetter)
-
-						if (newLineLetter == _separator)
-						{
-							lines.push(DataLine(lines.len(), this, {text = curLineText.slice(0, newLineId), widthPx = curLineWidthPx - newLineWidthPx}))
-							curLineText = newLineText + curTextLetter
-							curLineWidthPx = newLineWidthPx + curTextLetterWidthPx
-
-							foundSeparator = true
-							break
-						}
-						else
-						{
-							newLineText = newLineLetter + newLineText
-							newLineWidthPx += newLineLetterWidthPx
-						}
-					}
-
-					if (!foundSeparator)
-					{
-						lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
-						curLineText = ""
-						curLineWidthPx = 0
-					}
-				}
-			}
-			else	
-			{
-				curLineText += curTextLetter
-				curLineWidthPx += curTextLetterWidthPx
-			}
-		}
-		
-		lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
-
-		textSetFont(oldFont)
-		local linesCount = lines.len()
-		local visibleLinesCount = visibleLines.len()
-		scrollbar.range.setMaximum((visibleLinesCount < linesCount) ? (linesCount - visibleLinesCount) : 0)
-		updateLinesOffset()
-
-		if (scrollbar.range.getValue() != 0)
-			scrollbar.range.setValue(0)
-		else
-			refresh()
-
-		updateScrollbarVisibility()
-	}
-
-	function updateVisibleLines()
-	{
-		local oldVisibleLinesCount = visibleLines.len()
-		local marginPx = getMarginPx()
-		local newVisibleLinesCount = (getSizePx().height - marginPx.top - marginPx.bottom) / _lineHeightPx
-
-		for (local i = oldVisibleLinesCount; i < newVisibleLinesCount; ++i)
-			visibleLines.push(GUI.Draw({disabled = true, font = _font}))
-
-		for (local i = oldVisibleLinesCount - 1; i >= newVisibleLinesCount; --i)
-			visibleLines.remove(i)
-	}
-
-	function updateScrollbar()
-	{
-		local sizePx = getSizePx()
-		local positionPx = getPositionPx()
-		local scrollbarWidthPx = scrollbar.getSizePx().width
-
-		scrollbar.setPositionPx((positionPx.x + sizePx.width - scrollbarWidthPx), positionPx.y)
-		scrollbar.setSizePx(scrollbarWidthPx, sizePx.height)
-	}
-
-	function updateLinesOffset()
-	{
-		local sizePx = getSizePx()
-		local marginPx = getMarginPx()
-
-		switch (getAlignment())
-		{
-			case Align.Left:
-			{
-				foreach (i, line in lines)
-					line._offsetXPx = marginPx.left
-				break
-			}
-
-			case Align.Center:
-			{
-				foreach (i, line in lines)
-					line._offsetXPx = marginPx.left + ((sizePx.width - marginPx.right) - line._widthPx) / 2
-				break
-			}
-
-			case Align.Right:
-			{
-				foreach (i, line in lines)
-					line._offsetXPx = sizePx.width - line._widthPx - marginPx.right
-				break
-			}
-		}
 	}
 
 	function setPositionPx(x, y)
@@ -317,15 +166,12 @@ class GUI.Note extends GUINoteClasses
 
 		updateScrollbar()
 		updateVisibleLines()
-		updateLines()
 	}
 
 	function setMarginPx(top, right, bottom, left)
 	{
 		GUI.Margin.setMarginPx.call(this, top, right, bottom, left)
-
 		updateVisibleLines()
-		updateLines()
 	}
 
 	function getScrollbarVisibilityMode()
@@ -404,6 +250,18 @@ class GUI.Note extends GUINoteClasses
 		setLineHeightPx(nax(spacing))
 	}
 
+
+	function getScale()
+	{
+		return _scale
+	}	
+
+	function setScale(x, y)
+	{
+		_scale = {x = x, y = y}
+		updateVisibleLines()
+	}
+
 	function getWordsPerLine()
 	{
 		return _isWordsPerLine
@@ -445,7 +303,7 @@ class GUI.Note extends GUINoteClasses
 		local line = DataLine(id, this, arg)
 		local marginPx = getMarginPx()
 		local sizePx = getSizePx()
-		line._widthPx = textWidthPx(line.getText())
+		line._widthPx = textWidthPx(line.getText()) * _scale.x
 
 		switch (getAlignment())
 		{
@@ -519,6 +377,165 @@ class GUI.Note extends GUINoteClasses
 		updateLines()
 	}
 
+	function updateLines()
+	{
+		local oldFont = textGetFont()
+		local textLen = _text.len()
+		lines.clear()
+
+		if (!textLen)
+		{
+			scrollbar.range.setMaximum(0)
+			updateScrollbarVisibility()
+			refresh()
+			return
+		}
+
+		textSetFont(_font)
+		local marginPx = getMarginPx()
+		local maxLineWidthPx = getSizePx().width - marginPx.right - marginPx.left
+
+		local curLineText = ""
+		local curLineWidthPx = 0
+
+		for (local curTextId = 0, textLen = textLen; curTextId < textLen; ++curTextId)
+		{
+			local curTextAsciiCode = _text[curTextId]
+			local curTextLetter = curTextAsciiCode.tochar().tostring()
+			local curTextLetterWidthPx = textWidthPx(curTextLetter) * _scale.x
+
+			if (curTextAsciiCode == '\n')
+			{
+				lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
+				curLineText = ""
+				curLineWidthPx = 0
+			}
+			else if (curLineWidthPx >= maxLineWidthPx)
+			{
+				if (!_isWordsPerLine)
+				{
+					lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
+					curLineText = ""
+					curLineWidthPx = 0
+				}
+				else
+				{
+					local foundSeparator = false
+					local newLineText = ""
+					local newLineWidthPx = 0
+
+					for (local newLineId = curLineText.len() - 1; newLineId >= 0; --newLineId)
+					{
+						local newLineLetter = curLineText[newLineId].tochar().tostring()
+						local newLineLetterWidthPx = textWidthPx(newLineLetter) * _scale.x
+
+						if (newLineLetter == _separator)
+						{
+							lines.push(DataLine(lines.len(), this, {text = curLineText.slice(0, newLineId), widthPx = curLineWidthPx - newLineWidthPx}))
+							curLineText = newLineText + curTextLetter
+							curLineWidthPx = newLineWidthPx + curTextLetterWidthPx
+
+							foundSeparator = true
+							break
+						}
+						else
+						{
+							newLineText = newLineLetter + newLineText
+							newLineWidthPx += newLineLetterWidthPx
+						}
+					}
+
+					if (!foundSeparator)
+					{
+						lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
+						curLineText = ""
+						curLineWidthPx = 0
+					}
+				}
+			}
+			else	
+			{
+				curLineText += curTextLetter
+				curLineWidthPx += curTextLetterWidthPx
+			}
+		}
+		
+		if (curLineText.len())
+			lines.push(DataLine(lines.len(), this, {text = curLineText, widthPx = curLineWidthPx}))
+
+		textSetFont(oldFont)
+		local linesLen = lines.len()
+		local visibleLinesLen = visibleLines.len()
+		scrollbar.range.setMaximum((visibleLinesLen < linesLen) ? (linesLen - visibleLinesLen) : 0)
+		updateLinesOffset()
+
+		if (scrollbar.range.getValue() != 0)
+			scrollbar.range.setValue(0)
+			
+		refresh()
+		updateScrollbarVisibility()
+	}
+
+	function updateVisibleLines()
+	{
+		local oldCount = visibleLines.len()
+		local marginPx = getMarginPx()
+		local newCount = (getSizePx().height - marginPx.top - marginPx.bottom) / _lineHeightPx
+
+		for (local i = oldCount; i < newCount; ++i)
+		{
+			local line = GUI.Draw({disabled = true, font = _font})
+			line.setScale(_scale.x, _scale.y)
+
+			visibleLines.push(line)
+		}
+
+		for (local i = oldCount - 1; i >= newCount; --i)
+			visibleLines.remove(i)
+
+		updateLines()
+	}
+
+	function updateScrollbar()
+	{
+		local sizePx = getSizePx()
+		local positionPx = getPositionPx()
+		local scrollbarWidthPx = scrollbar.getSizePx().width
+
+		scrollbar.setPositionPx((positionPx.x + sizePx.width - scrollbarWidthPx), positionPx.y)
+		scrollbar.setSizePx(scrollbarWidthPx, sizePx.height)
+	}
+
+	function updateLinesOffset()
+	{
+		local sizePx = getSizePx()
+		local marginPx = getMarginPx()
+
+		switch (getAlignment())
+		{
+			case Align.Left:
+			{
+				foreach (i, line in lines)
+					line._offsetXPx = marginPx.left
+				break
+			}
+
+			case Align.Center:
+			{
+				foreach (i, line in lines)
+					line._offsetXPx = marginPx.left + ((sizePx.width - marginPx.right) - line._widthPx) / 2
+				break
+			}
+
+			case Align.Right:
+			{
+				foreach (i, line in lines)
+					line._offsetXPx = sizePx.width - line._widthPx - marginPx.right
+				break
+			}
+		}
+	}
+
 	function refresh()
 	{
 		local positionPx = getPositionPx()
@@ -530,18 +547,19 @@ class GUI.Note extends GUINoteClasses
 		{
 			if (maxLinesIndex < i)
 			{
-				if (visibleLine.getText() != "")
-					visibleLine.setText("")
+				if (visibleLine.getText() != " ")
+					visibleLine.setText(" ")
 				continue
 			}
 
 			local line = lines[i + scrollbarValue]
+			local text = line.getText()
 
-			visibleLine.setText(line.getText())
+			visibleLine.setText(text.len() ? text : " ")
 			visibleLine.setColor(line.getColor())
+			visibleLine.setScale(_scale.x, _scale.y)
 
 			visibleLine.setPositionPx(positionPx.x + line.getOffsetPx(), positionYPx)
-			visibleLine.top()
 			positionYPx += _lineHeightPx
 		}
 	}

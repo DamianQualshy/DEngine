@@ -22,38 +22,39 @@ class GUI.Event
 	
 #public:
 	toolTip = null
+	contextMenu = null
 
 	constructor(arg = null)
 	{
 		_events = array(EventType.Max)
 		toolTip = "toolTip" in arg ? arg.toolTip : toolTip
+		contextMenu = "contextMenu" in arg ? arg.contextMenu : contextMenu
 	}
 
-	function addToArray()
-	{
-		_id = _objects.len()
-		_objects.push(this.weakref())
-	}
+    function addToArray()
+    {
+        _objects.push(this.weakref())
+    }
 
-	function removeFromArray()
-	{
-		if (_id == -1)
-			return
+    function removeFromArray()
+    {
+        if (_id == -1)
+            return
 
-		for (local i = _objects.len() - 1; i > _id; --i)
-			--_objects[i]._id
-
-		_objects.remove(_id)
-		_id = -1
-	}
+        _objects[_id] = null
+        _id = -1
+    }
 
 	function top()
 	{
 		if (!getVisible())
 			return
 
-		removeFromArray()
-		addToArray()
+		local tmp = _objects[_id];
+		for (local i = _id; i < _objects.len() - 1; ++i)
+			_objects[i] = _objects[i + 1];
+
+		_objects[_objects.len() - 1] = tmp;
 	}
 
 	function bind(event_type, callback, priority = 9999)
@@ -79,7 +80,7 @@ class GUI.Event
 
 		local idx = null
 
-		foreach (handler in event.handlers)
+		foreach (i, handler in event.handlers)
 		{
 			if (handler.callback == callback)
 			{
@@ -133,12 +134,16 @@ class GUI.Event
 
 		if (!visible)
 		{
+			if (contextMenu && contextMenu.getActiveParent() == this)
+				contextMenu.setVisible(false)
+
 			if (this == ref.pointedByCursor)
 				setElementPointedByCursor(null)
 		
 			if (this == ref.focused)
 				setFocusedElement(null)
 
+			
 			removeFromArray()
 		}
 		else
@@ -168,8 +173,14 @@ class GUI.Event
 
 	function setDisabled(disabled)
 	{
-		if (disabled && isFocused())
+		if (!disabled)
+			return
+
+		if (isFocused())
 			setFocusedElement(null)
+
+		if (contextMenu && contextMenu.getActiveParent() == this)
+			contextMenu.setVisible(false)
 	}
 
 	function checkIsMouseAt()
@@ -278,49 +289,126 @@ class GUI.Event
 		}
 	}
 
-	static function onRender()
-	{
-		local deletedObjectIndicies = []
+    static function onRender()
+    {
+        local deletedObjectIndicies = []
+		local deletedObjects = 0
 
 		foreach (index, object in _objects)
-		{
-			if (object == null)
-			{
-				deletedObjectIndicies.push(index)
-				continue
-			}
+        {
+            if (object == null)
+            {
+                ++deletedObjects
+                deletedObjectIndicies.push(index)
+                continue
+            }
 
-			if (!object.getVisible())
-				continue
+            object._id = index - deletedObjects
 
-			object.call(EventType.Render)
-			callEvent("GUI.onRender", object)
-		}
+            if (!object.getVisible())
+                continue
 
-		for (local i = deletedObjectIndicies.len() - 1; i >= 0; --i)
-			_objects.remove(deletedObjectIndicies[i])
+            object.call(EventType.Render)
+            callEvent("GUI.onRender", object)
+        }
+
+        for (local i = deletedObjectIndicies.len() - 1; i >= 0; --i)
+            _objects.remove(deletedObjectIndicies[i])
+    }
+
+	static function onKeyInput(key, letter)
+	{
+		if (!ref.focused)
+			return
+
+		// ignore whitespace characters
+		if (letter < 32 || letter == 127)
+			return
+
+		ref.focused.call(EventType.KeyInput, key, letter)
+		callEvent("GUI.onKeyInput", ref.focused, key, letter)
 	}
 
-	static function onMouseMove(x, y)
+	static function onKeyDown(key)
+	{
+		if (!ref.focused)
+			return
+
+		ref.focused.call(EventType.KeyDown, key)
+		callEvent("GUI.onKeyDown", ref.focused, key)
+	}
+
+	static function onKeyUp(key)
+	{
+		if (!ref.focused)
+			return
+
+		ref.focused.call(EventType.KeyUp, key)
+		callEvent("GUI.onKeyUp", ref.focused, key)
+	}
+
+	static function onMouseUp(button)
 	{
 		if (!isCursorVisible())
 			return
 
-		setElementPointedByCursor(findElementPointedByCursor())
-		
-		if (ref.pointedByCursor)
-		{
-			local cursorPositionPx = getCursorPositionPx()
-			local cursorSensitivity = getCursorSensitivity()
-	
-			local newCursorX = cursorPositionPx.x
-			local newCursorY = cursorPositionPx.y
-			local oldCursorX = cursorPositionPx.x - x * cursorSensitivity
-			local oldCursorY = cursorPositionPx.y - y * cursorSensitivity
+		if (!ref.focused)
+			return
 
-			ref.pointedByCursor.call(EventType.MouseMove, newCursorX, newCursorY, oldCursorX, oldCursorY)
-			callEvent("GUI.onMouseMove", ref.pointedByCursor, newCursorX, newCursorY, oldCursorX, oldCursorY)
+		ref.focused.call(EventType.MouseUp, button)
+		callEvent("GUI.onMouseUp", ref.focused, button)
+
+		if (button == MOUSE_BUTTONLEFT)
+		{
+			ref.focused.call(EventType.Click)
+			callEvent("GUI.onClick", ref.focused)
+
+			local now = getTickCount()
+			if (ref.lastClicked == ref.focused && now <= doubleClickTimestamp)
+			{
+				ref.lastClicked = null
+				doubleClickTimestamp = null
+
+				ref.focused.call(EventType.DoubleClick)				
+				callEvent("GUI.onDoubleClick", ref.focused)
+			}
+			else
+			{
+				ref.lastClicked = (ref.focused != null) ? ref.focused.weakref() : null
+				doubleClickTimestamp = (ref.focused != null) ? now + DOUBLE_CLICK_TIME : null
+			}	
 		}
+	}
+
+	static function onKeyInput(key, letter)
+	{
+		if (!ref.focused)
+			return
+
+		// ignore whitespace characters
+		if (letter < 32 || letter == 127)
+			return
+
+		ref.focused.call(EventType.KeyInput, key, letter)
+		callEvent("GUI.onKeyInput", ref.focused, key, letter)
+	}
+
+	static function onKeyDown(key)
+	{
+		if (!ref.focused)
+			return
+
+		ref.focused.call(EventType.KeyDown, key)
+		callEvent("GUI.onKeyDown", ref.focused, key)
+	}
+
+	static function onKeyUp(key)
+	{
+		if (!ref.focused)
+			return
+
+		ref.focused.call(EventType.KeyUp, key)
+		callEvent("GUI.onKeyUp", ref.focused, key)
 	}
 
 	static function onMouseDown(button)
@@ -370,6 +458,28 @@ class GUI.Event
 		}
 	}
 
+	static function onMouseMove(x, y)
+	{
+		if (!isCursorVisible())
+			return
+
+		setElementPointedByCursor(findElementPointedByCursor())
+		
+		if (ref.pointedByCursor)
+		{
+			local cursorPositionPx = getCursorPositionPx()
+			local cursorSensitivity = getCursorSensitivity()
+	
+			local newCursorX = cursorPositionPx.x
+			local newCursorY = cursorPositionPx.y
+			local oldCursorX = cursorPositionPx.x - x * cursorSensitivity
+			local oldCursorY = cursorPositionPx.y - y * cursorSensitivity
+
+			ref.pointedByCursor.call(EventType.MouseMove, newCursorX, newCursorY, oldCursorX, oldCursorY)
+			callEvent("GUI.onMouseMove", ref.pointedByCursor, newCursorX, newCursorY, oldCursorX, oldCursorY)
+		}
+	}
+
 	static function onCursorShow()
 	{
 		setElementPointedByCursor(findElementPointedByCursor())
@@ -394,9 +504,12 @@ class GUI.Event
 }
 
 addEventHandler("onRender", GUI.Event.onRender.bindenv(GUI.Event))
-addEventHandler("onMouseMove", GUI.Event.onMouseMove.bindenv(GUI.Event))
+addEventHandler("onKeyInput", GUI.Event.onKeyInput.bindenv(GUI.Event))
+addEventHandler("onKeyDown", GUI.Event.onKeyDown.bindenv(GUI.Event))
+addEventHandler("onKeyUp", GUI.Event.onKeyUp.bindenv(GUI.Event))
 addEventHandler("onMouseDown", GUI.Event.onMouseDown.bindenv(GUI.Event))
 addEventHandler("onMouseUp", GUI.Event.onMouseUp.bindenv(GUI.Event))
+addEventHandler("onMouseMove", GUI.Event.onMouseMove.bindenv(GUI.Event))
 
 local _setCursorVisible = setCursorVisible
 function setCursorVisible(toggle)

@@ -109,6 +109,15 @@ class GUI.Button extends GUIButtonClasses
 		alignDraw()
 	}
 
+	function setScale(x, y)
+	{
+		if (!draw)
+			return
+
+		draw.setScale(x, y)
+		alignDraw()
+	}
+
 	function alignDraw()
 	{
 		local positionPx = getPositionPx()

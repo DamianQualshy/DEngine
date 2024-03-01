@@ -363,6 +363,15 @@ class GUI.List extends GUIListClasses
 		updateScrollbarVisibility()
 	}
 
+	function setDisabled(disabled)
+	{
+		GUI.Texture.setDisabled.call(this, disabled)
+		foreach (visibleRow in visibleRows)
+			visibleRow.setDisabled(disabled)
+
+		scrollbar.setDisabled(disabled)
+	}
+
 	function insertRow(rowId, arg)
 	{
 		local visible = getVisible()
@@ -471,14 +480,14 @@ class GUI.List extends GUIListClasses
 		local rowSpacePx = _rowHeightPx + _rowSpacingPx
 		local rowsLen = rows.len()
 
-		local visibleRowsLen = (sizePx.height - marginPx.top - marginPx.bottom) / rowSpacePx
+		local visibleRowsLen = (_rowHeightPx > 0) ? ((sizePx.height - marginPx.top - marginPx.bottom + _rowSpacingPx) / rowSpacePx) : 0
 		_visibleRowsCount = visibleRowsLen <= rowsLen ? visibleRowsLen : rowsLen
 
 		// Insert visibleRows loop:
 		local visible = getVisible()
 		for (local i = oldVisibleRowsLen; i < visibleRowsLen; ++i)
 		{
-			local visibleRow = GUI.ListVisibleRow(i, this)
+			local visibleRow = _createVisibleRow(i)
 			visibleRow.setAlignment(_alignment)
 			visibleRow.setVisible(visible)
 
@@ -515,8 +524,8 @@ class GUI.List extends GUIListClasses
 			if (scrollVisible != scrollbar.getVisible())
 				scrollbar.setVisible(scrollVisible)
 		}
-		else
-			refresh()
+		
+		refresh()
 	}
 
 	function refresh(begin = 0)
@@ -544,5 +553,9 @@ class GUI.List extends GUIListClasses
 			visibleRows[i].setFont(row.getFont())
 			visibleRows[i].setDisabled(row.getDisabled())
 		}
+	}
+
+	function _createVisibleRow(id) {
+		return GUI.ListVisibleRow(id, this)
 	}
 }

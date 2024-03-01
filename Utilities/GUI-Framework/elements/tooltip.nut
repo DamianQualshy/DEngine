@@ -3,19 +3,7 @@ local ref =
 	activeToolTip = null
 }
 
-local function clamp(x, min, max)
-{
-	if (x < min)
-		return min
-	
-	if (x > max)
-		return max
-
-	return x
-}
-
 local toolTipInterval = -1
-
 class GUI.ToolTip extends GUI.Button
 {
 #public:

@@ -295,6 +295,7 @@ class GUI.GridListColumn extends GUI.Alignment
 
 #private:
 	_widthPx = 0
+	_offsetXPx = 0
 
 	constructor(id, parent, arg)
 	{
@@ -309,6 +310,13 @@ class GUI.GridListColumn extends GUI.Alignment
 			_widthPx = nax(arg.width)
 		else
 			_widthPx = 0
+
+		if ("_offsetXPx" in arg)
+			_offsetXPx = arg._offsetXPx
+		else if ("offsetX" in arg)
+			_offsetXPx = nax(arg.offsetX)
+		else
+			_offsetXPx = 0
 	}
 	
 	function getWidthPx()
@@ -327,9 +335,29 @@ class GUI.GridListColumn extends GUI.Alignment
 		return anx(_widthPx)
 	}
 
-	function setWidth(width)
-	{
+	function setWidth(width) {
 		setWidthPx(nax(width))
+	}
+
+	function getOffsetXPx()
+	{
+		return _offsetXPx
+	}
+
+	function setOffsetXPx(offsetX)
+	{
+		_offsetXPx = offsetX
+		foreach (visibleRow in parent.visibleRows)
+			visibleRow.cells[this].setOffsetPx(offsetX, 0)
+	}
+
+	function getOffsetX()
+	{
+		return anx(_offsetXPx)
+	}
+
+	function setOffsetX(offsetX) {
+		setOffsetXPx(nax(offsetX))
 	}
 
 	function setAlignment(alignment)
@@ -753,7 +781,7 @@ class GUI.GridList extends GUIGridListClasses
 		local oldVisibleRowsLen = visibleRows.len()
 		local marginPx = getMarginPx()
 		local rowsLen = rows.len()
-		local visibleRowsLen = (getSizePx().height - marginPx.top - marginPx.bottom) / (_rowHeightPx + _rowSpacingPx)
+		local visibleRowsLen = (getSizePx().height - marginPx.top - marginPx.bottom + _rowSpacingPx) / (_rowHeightPx + _rowSpacingPx)
 	
 		_visibleRowsCount = visibleRowsLen <= rowsLen ? visibleRowsLen : rowsLen
 
@@ -786,10 +814,12 @@ class GUI.GridList extends GUIGridListClasses
 		local rowPositionXPx = positionPx.x + marginPx.left
 		local rowFullSizePx = _rowHeightPx + _rowSpacingPx
 		local disabled = getDisabled()
+
 		foreach (column in columns)
 		{
 			local columnAlignment = column.getAlignment()
 			local columnWidthPx = column.getWidthPx() * factor
+			local columnOffsetXPx = column.getOffsetXPx()
 			local rowPositionYPx = positionPx.y + marginPx.top
 
 			column._widthPx = columnWidthPx
@@ -810,6 +840,7 @@ class GUI.GridList extends GUIGridListClasses
 					
 				visibleCell.setPositionPx(rowPositionXPx, rowPositionYPx)
 				visibleCell.setSizePx(columnWidthPx, _rowHeightPx)
+				visibleCell.setOffsetPx(columnOffsetXPx, 0)
 				rowPositionYPx += rowFullSizePx
 			}
 
@@ -837,8 +868,8 @@ class GUI.GridList extends GUIGridListClasses
 			if (scrollVisible != scrollbar.getVisible())
 				scrollbar.setVisible(scrollVisible)
 		}
-		else
-			refreshList()
+		
+		refreshList()
 	}
 
 	function refreshList(begin = 0)

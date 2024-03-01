@@ -3,16 +3,6 @@ local ref =
 	movableTab = null
 }
 
-local function clamp(x, min, max)
-{
-	if (x < min)
-		return min
-	
-	if (x > max)
-		return max
-
-	return x
-}
 
 local cursorDragOffsetPx = Vec2i()
 

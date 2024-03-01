@@ -45,6 +45,9 @@ enum EventType
 	DoubleClick,
 	TakeFocus,
 	LostFocus,
+	KeyUp,
+	KeyDown,
+	KeyInput,
 	MouseIn,
 	MouseOut,
 	MouseMove,
@@ -83,9 +86,9 @@ addEvent("GUI.onChange")
 addEvent("GUI.onSwitch")
 
 // input.nut
-addEvent("GUI.onInputInsertLetter")
-addEvent("GUI.onInputRemoveLetter")
-
+addEvent("GUI.onKeyInput")
+addEvent("GUI.onKeyDown")
+addEvent("GUI.onKeyUp")
 
 //Main init func
 addEventHandler("onInit",function()

@@ -114,7 +114,7 @@ class GUI.Table extends GUI.GridList
 		local marginPx = getMarginPx()
 		local rowSpacePx = _rowHeightPx + _rowSpacingPx
 		local rowsLen = rows.len()
-		local visibleRowsLen = (getSizePx().height - marginPx.top - marginPx.bottom - rowSpacePx) / rowSpacePx
+		local visibleRowsLen = (_rowHeightPx > 0) ? ((getSizePx().height - marginPx.top - marginPx.bottom - rowSpacePx) / rowSpacePx) : 0
 
 		_visibleRowsCount = visibleRowsLen <= rowsLen ? visibleRowsLen : rowsLen
 
@@ -125,6 +125,7 @@ class GUI.Table extends GUI.GridList
 		//  Remove visibleRows loop:
 		for (local i = oldVisibleRowsLen - 1; i >= visibleRowsLen; --i)
 			visibleRows.remove(i)
+
 	}
 
 	function updateColumns()
@@ -155,6 +156,7 @@ class GUI.Table extends GUI.GridList
 		{
 			local columnAlignment = column.getAlignment()
 			local columnWidthPx = column.getWidthPx() * factor
+			local columnOffsetXPx = column.getOffsetXPx()
 			local rowPosYPx = startRowPosYPx
 
 			_columnsWidthPx += columnWidthPx
@@ -177,6 +179,7 @@ class GUI.Table extends GUI.GridList
 					
 				visibleCell.setPositionPx(columnPosX, rowPosYPx)
 				visibleCell.setSizePx(columnWidthPx, _rowHeightPx)
+				visibleCell.setOffsetPx(columnOffsetXPx, 0)
 
 				rowPosYPx += rowSpacePx
 			}
