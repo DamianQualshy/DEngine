@@ -485,33 +485,33 @@ class PrototypeHero {
 
 
 
-	function init(id){
+	function init(id, params){
 		this.id = id;
 
 		spawnPlayer(this.id);
 
-		this.setName(getPlayerName(id));
+		this.setName(params.name);
 
-		this.setInstance(getPlayerInstance(id));
-		this.setGuild(2)
+		this.setInstance(params.instance);
+		this.setGuild(params.guild)
 
-		this.setLevel(100)
+		this.setLevel(params.level)
 		this.setExperience(250 * pow(this.getLevel(), 2))
 		this.setLearnPoints(10 * this.getLevel());
 
-		this.setHealth(1000);
-		this.setMaxHealth(1000);
-		this.setMana(500);
-		this.setMaxMana(500);
-		this.setStrength(200);
-		this.setDexterity(200);
+		this.setHealth(40);
+		this.setMaxHealth(40);
+		this.setMana(10);
+		this.setMaxMana(10);
+		this.setStrength(10);
+		this.setDexterity(10);
 
-		this.setOneHandSkill(100);
-		this.setTwoHandSkill(100);
-		this.setBowSkill(100);
-		this.setCrossbowSkill(100);
+		this.setOneHandSkill(10);
+		this.setTwoHandSkill(10);
+		this.setBowSkill(10);
+		this.setCrossbowSkill(10);
 
-		this.setMagicCircle(6);
+		this.setMagicCircle(0);
 
 		this.setSneakTalent(true);
 		this.setPicklockTalent(true);
@@ -522,9 +522,10 @@ class PrototypeHero {
 		this.setTrophiesTalent(true);
 		this.setAcrobaticTalent(true);
 
-		this.setWalkstyle("HUMANS.MDS");
-		this.setVisual("HUM_BODY_NAKED0", 8, "HUM_HEAD_PONY", 18);
-		this.setScale(1.0, 1.0, 1.0, 1.0);
+		this.setVisual(params.visual[0], params.visual[1], params.visual[2], params.visual[3]);
+		this.setWalkstyle(params.walk);
+			local scale = params.height;
+		this.setScale(scale, scale, scale, params.fatness);
 
 		this.setWorld("NEWWORLD\\NEWWORLD.ZEN");
 		this.setVirtualWorld(0);
