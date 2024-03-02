@@ -246,16 +246,16 @@ local visSetting = {
 
 local visValue = {
 	[MALE] = {
-		[PALE] = [0, 0, 0],
-		[WHITE] = [0, 0, 0],
-		[LATINO] = [0, 0, 0],
-		[BLACK] = [0, 0, 0]
+		[PALE] = [0, 0],
+		[WHITE] = [0, 0],
+		[LATINO] = [0, 0],
+		[BLACK] = [0, 0]
 	},
 	[FEMALE] = {
-		[PALE] = [0, 0, 0],
-		[WHITE] = [0, 0, 0],
-		[LATINO] = [0, 0, 0],
-		[BLACK] = [0, 0, 0]
+		[PALE] = [0, 0],
+		[WHITE] = [0, 0],
+		[LATINO] = [0, 0],
+		[BLACK] = [0, 0]
 	}
 };
 
@@ -296,22 +296,22 @@ function updateCreatorTextures(sex, race, val, category){
 					bodiesTex[texture].setFile("");
 				}
 			}
+
+			facesScroll.setMaximum(faces[sex][race].len()-6 < 0 ? 0 : faces[sex][race].len()-6);
+			bodiesScroll.setMaximum(bodies[sex][race].len()-6 < 0 ? 0 : bodies[sex][race].len()-6);
+			headMScroll.setMaximum(heads[sex].len() - 1);
+
+			bodiesScroll.setValue(visValue[sex][race][0]);
+			facesScroll.setValue(visValue[sex][race][1]);
 		break;
 	}
 
 	local vis = visSetting[sex][race];
 		setPlayerVisual(heroId, vis[0], vis[1], vis[2], vis[3]);
-
-	facesScroll.setMaximum(faces[sex][race].len()-6 < 0 ? 0 : faces[sex][race].len()-6);
-	bodiesScroll.setMaximum(bodies[sex][race].len()-6 < 0 ? 0 : bodies[sex][race].len()-6);
-	headMScroll.setMaximum(heads[sex].len() - 1);
-
-	bodiesScroll.setValue(visValue[sex][race][0]);
-	headMScroll.setValue(visValue[sex][race][1]);
-	facesScroll.setValue(visValue[sex][race][2]);
 }
 
 addEventHandler("GUI.onChange", function(object){
+	if(creatorCollection.getVisible()){
 		local sex = bodyMScroll.getValue().tointeger();
 		local race = bodyTScroll.getValue().tointeger();
 		local vis = visSetting[sex][race];
@@ -355,10 +355,12 @@ addEventHandler("GUI.onChange", function(object){
 			break;
 		}
 
-		visValue[sex][race] = [bodyval, headval, faceval];
+		visValue[sex][race] = [bodyval, faceval];
+	}
 });
 
 addEventHandler("GUI.onClick", function(self){
+	if(creatorCollection.getVisible()){
 		local sex = bodyMScroll.getValue().tointeger();
 		local race = bodyTScroll.getValue().tointeger();
 		local vis = visSetting[sex][race];
@@ -410,4 +412,5 @@ addEventHandler("GUI.onClick", function(self){
 					toggleCreator(false);
 			break;
 		}
+	}
 });
