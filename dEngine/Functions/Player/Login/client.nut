@@ -81,6 +81,7 @@ addEventHandler("onInit", function(){
 });
 
 addEventHandler("GUI.onClick", function(self){
+	if(loginCollection.getVisible()){
 		switch(self){
 			case loginGUI.playBtn:
 				toggleLogin(false);
@@ -91,4 +92,5 @@ addEventHandler("GUI.onClick", function(self){
 				toggleLogin(false);
 			break;
 		}
+	}
 });
