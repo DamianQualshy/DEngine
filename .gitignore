@@ -3,6 +3,8 @@ Immersive Khorinis/*
 cache/*
 waypoints/*
 
+Utilities/GUI-Framework/examples/*
+
 bans.xml
 config.xml
 mds.xml
