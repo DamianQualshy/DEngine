@@ -14,6 +14,7 @@ dEngine doesn't require any outside modules or frameworks, since it already cont
 - Player Class
 - NPC Class
 - Journal
+- Character Creator
 
 ### To-Do
 - Chat
@@ -22,7 +23,6 @@ dEngine doesn't require any outside modules or frameworks, since it already cont
 - Player Commands
 - NPC AI
 - Primitive Calendar
-- Character Creator
 - Login/Register
 - Save/Load Client Data with MySQL
 - Discord Activity
