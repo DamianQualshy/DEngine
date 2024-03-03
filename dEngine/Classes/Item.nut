@@ -32,27 +32,25 @@ class Item {
 	function initItem(params){
 		this.id = Daedalus.index(this.instance);
 
-		this.name = params.name;
-
 		this.mainflag = params.mainflag;
 		this.flags = params.flags;
 
 		this.value = params.value;
 
-		this.owner = params.owner;
-		this.ownerGuild = params.ownerGuild;
-		this.disguiseGuild = params.disguiseGuild;
+		this.owner = "owner" in params ? params.owner : null;
+		this.ownerGuild = "ownerGuild" in params ? params.ownerGuild : null;
+		this.disguiseGuild = "disguiseGuild" in params ? params.disguiseGuild : null;
 
 		this.file = params.file;
-		this.effectName = params.effectName;
+		this.effectName = "effectName" in params ? params.effectName : "";
 
 		this.material = params.material;
 
-		this.description = params.description;
+		this.description = "description" in params ? params.description : params.name;
 	}
 }
 
-class MeleeWeapon extends Item {
+class IT_MeleeWeapon extends Item {
 	damageTypes = -1;
 	damageTotal = -1;
 
@@ -71,7 +69,7 @@ class MeleeWeapon extends Item {
 	}
 }
 
-class RangedWeapon extends Item {
+class IT_RangedWeapon extends Item {
 	damageTypes = -1;
 	damageTotal = -1;
 
@@ -90,7 +88,7 @@ class RangedWeapon extends Item {
 	}
 }
 
-class Armor extends Item {
+class IT_Armor extends Item {
 	wear = -1;
 
 	visual_change = "";
@@ -109,7 +107,7 @@ class Armor extends Item {
 	}
 }
 
-class Food extends Item {
+class IT_Potion extends Item {
 	nutrition = -1;
 
 	scemeName = "";
@@ -126,7 +124,7 @@ class Food extends Item {
 	}
 }
 
-class Plant extends Item {
+class IT_Food extends Item {
 	nutrition = -1;
 
 	scemeName = "";
@@ -143,7 +141,24 @@ class Plant extends Item {
 	}
 }
 
-class Scroll extends Item {
+class IT_Plant extends Item {
+	nutrition = -1;
+
+	scemeName = "";
+
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.nutrition = params.nutrition;
+
+		this.scemeName = params.scemeName;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Scroll extends Item {
 	spell = -1;
 
 	mag_circle = -1;
@@ -160,7 +175,7 @@ class Scroll extends Item {
 	}
 }
 
-class Rune extends Item {
+class IT_Rune extends Item {
 	spell = -1;
 
 	mag_circle = -1;
@@ -177,7 +192,34 @@ class Rune extends Item {
 	}
 }
 
-class Misc extends Item {
+class IT_Written extends Item {
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Trophy extends Item {
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Mission extends Item {
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Misc extends Item {
 	constructor(instance, params){
 		this.instance = instance;
 
