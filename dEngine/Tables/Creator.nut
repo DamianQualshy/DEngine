@@ -30,14 +30,6 @@ walking <- [
 	{
 		name = "Arrogant",
 		style = "HUMANS_ARROGANCE.MDS"
-	},
-	{
-		name = "Leader",
-		style = "HUMANS.MDS"
-	},
-	{
-		name = "Casual",
-		style = "HUMANS.MDS"
 	}
 ];
 
