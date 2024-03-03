@@ -50,7 +50,9 @@
 
 	<script src="Functions/NPC/Create.nut" type="server" />
 
-	<script src="Functions/Chat/GlobalChat.nut" type="server" />
+	<script src="Functions/Chat/Chat.nut" type="server" />
+	<script src="Functions/Chat/PrivateChat.nut" type="server" />
+	<script src="Functions/Chat/ServerChat.nut" type="server" />
 
 	<script src="Functions/DiscordActivity/client.nut" type="client" />
 
