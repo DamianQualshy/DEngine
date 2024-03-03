@@ -20,10 +20,6 @@ class Item {
 
 	material = -1;
 
-	spell = -1;
-
-	mag_circle = -1;
-
 	description = "";
 
 	inv_zbias = -1;
@@ -124,6 +120,66 @@ class Food extends Item {
 		this.nutrition = params.nutrition;
 
 		this.scemeName = params.scemeName;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class Plant extends Item {
+	nutrition = -1;
+
+	scemeName = "";
+
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.nutrition = params.nutrition;
+
+		this.scemeName = params.scemeName;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class Scroll extends Item {
+	spell = -1;
+
+	mag_circle = -1;
+
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.spell = params.spell;
+
+		this.mag_circle = params.mag_circle;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class Rune extends Item {
+	spell = -1;
+
+	mag_circle = -1;
+
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.spell = params.spell;
+
+		this.mag_circle = params.mag_circle;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class Misc extends Item {
+	constructor(instance, params){
+		this.instance = instance;
 
 		this.initItem(params);
 		Items[this.instance] <- this;
