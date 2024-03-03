@@ -12,4 +12,6 @@ data.xml
 
 server.log
 
+*.sql
+
 G2O_Server.x64.exe
