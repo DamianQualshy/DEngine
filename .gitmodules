@@ -4,3 +4,15 @@
 [submodule "Submodules/gui-framework"]
 	path = Submodules/gui-framework
 	url = https://gitlab.com/g2o/scripts/gui-framework
+[submodule "Submodules/areamanager"]
+	path = Submodules/areamanager
+	url = https://gitlab.com/g2o/scripts/areamanager
+[submodule "Submodules/tween.nut"]
+	path = Submodules/tween.nut
+	url = https://gitlab.com/g2o/scripts/tween.nut
+[submodule "Submodules/freecam"]
+	path = Submodules/freecam
+	url = https://gitlab.com/g2o/scripts/freecam
+[submodule "Submodules/camerapath"]
+	path = Submodules/camerapath
+	url = https://gitlab.com/g2o/scripts/camerapath

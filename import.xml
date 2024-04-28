@@ -1,4 +1,7 @@
 <server>
+		<!-- Submodules -->
+	<import src="Submodules/import.xml" />
+
 		<!-- Utilities -->
 	<import src="Utilities/import.xml" />
 
