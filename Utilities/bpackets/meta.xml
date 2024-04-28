@@ -1,4 +1,0 @@
-<server>
-    <script src="types.nut" type="shared" />
-    <script src="message.nut" type="shared" />
-</server>
