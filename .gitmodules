@@ -1,0 +1,6 @@
+[submodule "Submodules/bpackets"]
+	path = Submodules/bpackets
+	url = https://gitlab.com/bcore1/bpackets
+[submodule "Submodules/gui-framework"]
+	path = Submodules/gui-framework
+	url = https://gitlab.com/g2o/scripts/gui-framework
