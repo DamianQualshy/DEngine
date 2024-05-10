@@ -17,7 +17,7 @@
 	<script src="Packets/Hero/Creator/server.nut" type="server" />
 	<script src="Packets/Hero/Creator/client.nut" type="client" />
 
-	<script src="Packets/PacketMessage/Journal.nut" type="shared" />
+	<script src="Packets/PacketMessage/Journal/Journal.nut" type="shared" />
 	<script src="Packets/Journal/server.nut" type="server" />
 	<script src="Packets/Journal/client.nut" type="client" />
 
@@ -29,20 +29,23 @@
 	<script src="Classes/Player.nut" type="server" />
 	<script src="Classes/NPC.nut" type="server" />
 	<script src="Classes/Inventory.nut" type="server" />
-	<script src="Classes/Item.nut" type="server" />
+	<script src="Classes/Item.nut" type="shared" />
+	<script src="Classes/Chunk.nut" type="server" />
 
 		<!-- Events -->
 
 
 		<!-- Functions -->
-	<script src="Functions/Convert/Types.nut" type="shared" />
+	<script src="Functions/Utility/Convert.nut" type="shared" />
 
-	<script src="Functions/Checks/shared.nut" type="shared" />
+	<script src="Functions/Utility/Checks/shared.nut" type="shared" />
 
-	<script src="Functions/Math/Range.nut" type="shared" />
+	<script src="Functions/Utility/Math/Range.nut" type="shared" />
 
-	<script src="Functions/Log/server.nut" type="server" />
-	<script src="Functions/Log/client.nut" type="client" />
+	<script src="Functions/Utility/Log.nut" type="server" />
+
+	<script src="Packets/Log/server.nut" type="server" />
+	<script src="Packets/Log/client.nut" type="client" />
 
 	<script src="Functions/Player/Login/client.nut" type="client" />
 	<script src="Functions/Player/Creator/client.nut" type="client" />
