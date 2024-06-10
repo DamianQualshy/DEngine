@@ -16,3 +16,5 @@ server.log
 
 G2O_Server.x64.exe
 .vscode/launch.json
+dEngine/import.xml
+items.xml
