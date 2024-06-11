@@ -30,7 +30,7 @@
 	<script src="Classes/NPC.nut" type="server" />
 	<script src="Classes/Inventory.nut" type="server" />
 	<script src="Classes/Item.nut" type="shared" />
-	<!--<script src="Classes/Chunk.nut" type="server" /> -->
+	<!-->script src="Classes/Chunk.nut" type="server" />-->
 
 		<!-- Events -->
 
