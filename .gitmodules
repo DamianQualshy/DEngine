@@ -4,6 +4,7 @@
 [submodule "Submodules/gui-framework"]
 	path = Submodules/gui-framework
 	url = https://gitlab.com/g2o/scripts/gui-framework
+	branch = 0.3.0
 [submodule "Submodules/areamanager"]
 	path = Submodules/areamanager
 	url = https://gitlab.com/g2o/scripts/areamanager
@@ -16,3 +17,6 @@
 [submodule "Submodules/camerapath"]
 	path = Submodules/camerapath
 	url = https://gitlab.com/g2o/scripts/camerapath
+[submodule "Submodules/inventory"]
+	path = Submodules/inventory
+	url = https://gitlab.com/g2o/scripts/inventory
