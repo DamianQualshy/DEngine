@@ -1,5 +1,3 @@
-regenTimer <- null;
-
 function checkPermissions(pid, level){
 	if(Players[pid].getAuthority() < level){
 		sendServerMessage(pid, "PANEL", "You don't have required permissions.");
