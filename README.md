@@ -9,15 +9,18 @@ dEngine doesn't require any outside modules or frameworks, since it already cont
 - Bimbol's Packet Serialization
 - DocNITE's Tween Port
 - Patrix's AreaManager
+- Patrix's Inventory
 
 ## Features
 - Player Class
 - NPC Class
-- Journal
+- Quest Journal
 - Character Creator
+- Chat
+- ACP
+- Discord Activity
 
 ### To-Do
-- Chat
 - Admin Commands
 - Moderator Commands
 - Player Commands
@@ -25,7 +28,6 @@ dEngine doesn't require any outside modules or frameworks, since it already cont
 - Primitive Calendar
 - Login/Register
 - Save/Load Client Data with MySQL
-- Discord Activity
 - Locations/Zones with restrictions
 - Server-side Items
 - Save/Load Server Data with MySQL
