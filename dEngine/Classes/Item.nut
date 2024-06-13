@@ -1,13 +1,13 @@
 Items <- {};
 
-class Item {
+class serverItem {
 	id = -1;
 	instance = -1;
 
 	name = "";
 
 	mainflag = -1;
-	flags = -1
+	flags = -1;
 
 	value = -1;
 
@@ -50,7 +50,7 @@ class Item {
 	}
 }
 
-class IT_MeleeWeapon extends Item {
+class IT_MeleeWeapon extends serverItem {
 	damageTypes = -1;
 	damageTotal = -1;
 
@@ -69,7 +69,7 @@ class IT_MeleeWeapon extends Item {
 	}
 }
 
-class IT_RangedWeapon extends Item {
+class IT_RangedWeapon extends serverItem {
 	damageTypes = -1;
 	damageTotal = -1;
 
@@ -88,7 +88,7 @@ class IT_RangedWeapon extends Item {
 	}
 }
 
-class IT_Armor extends Item {
+class IT_Armor extends serverItem {
 	wear = -1;
 
 	visual_change = "";
@@ -107,7 +107,44 @@ class IT_Armor extends Item {
 	}
 }
 
-class IT_Potion extends Item {
+class IT_Helmet extends serverItem {
+	wear = -1;
+
+	visual_change = "";
+	visual_skin = -1;
+
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.wear = params.wear;
+
+		this.visual_change = params.visual_change;
+		this.visual_skin = params.visual_skin;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Amulet extends serverItem {
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Ring extends serverItem {
+	constructor(instance, params){
+		this.instance = instance;
+
+		this.initItem(params);
+		Items[this.instance] <- this;
+	}
+}
+
+class IT_Potion extends serverItem {
 	nutrition = -1;
 
 	scemeName = "";
@@ -124,7 +161,7 @@ class IT_Potion extends Item {
 	}
 }
 
-class IT_Food extends Item {
+class IT_Food extends serverItem {
 	nutrition = -1;
 
 	scemeName = "";
@@ -141,7 +178,7 @@ class IT_Food extends Item {
 	}
 }
 
-class IT_Plant extends Item {
+class IT_Plant extends serverItem {
 	nutrition = -1;
 
 	scemeName = "";
@@ -158,7 +195,7 @@ class IT_Plant extends Item {
 	}
 }
 
-class IT_Scroll extends Item {
+class IT_Scroll extends serverItem {
 	spell = -1;
 
 	mag_circle = -1;
@@ -175,7 +212,7 @@ class IT_Scroll extends Item {
 	}
 }
 
-class IT_Rune extends Item {
+class IT_Rune extends serverItem {
 	spell = -1;
 
 	mag_circle = -1;
@@ -192,7 +229,7 @@ class IT_Rune extends Item {
 	}
 }
 
-class IT_Written extends Item {
+class IT_Written extends serverItem {
 	constructor(instance, params){
 		this.instance = instance;
 
@@ -201,7 +238,7 @@ class IT_Written extends Item {
 	}
 }
 
-class IT_Trophy extends Item {
+class IT_Trophy extends serverItem {
 	constructor(instance, params){
 		this.instance = instance;
 
@@ -210,7 +247,7 @@ class IT_Trophy extends Item {
 	}
 }
 
-class IT_Mission extends Item {
+class IT_Mission extends serverItem {
 	constructor(instance, params){
 		this.instance = instance;
 
@@ -219,7 +256,7 @@ class IT_Mission extends Item {
 	}
 }
 
-class IT_Misc extends Item {
+class IT_Misc extends serverItem {
 	constructor(instance, params){
 		this.instance = instance;
 
