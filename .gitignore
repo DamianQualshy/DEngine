@@ -1,17 +1,28 @@
 Immersive Khorinis/*
 
+_tmp/*
+
 cache/*
 waypoints/*
-
-Utilities/GUI-Framework/examples/*
 
 bans.xml
 config.xml
 mds.xml
 data.xml
 
-server.log
-
+*.log
+*.txt
 *.sql
 
-G2O_Server.x64.exe
+*.dll
+*.vm
+
+*.exe
+*.py
+*.sh
+
+*.rar
+*.zip
+
+*.png
+*.xcf

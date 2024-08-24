@@ -4,12 +4,9 @@
 	<import src="gui-framework/gui.xml" />
 
 	<import src="tween.nut/tween.xml" />
-
-	<import src="camerapath/CameraPath.xml" />
-	<script src="freecam/freecam.nut" type="client" />
 	
-	<script src="areamanager/area.nut" type="client" />
-	<script src="areamanager/area.nut" type="server" />
-	<script src="areamanager/areamanager.nut" type="client" />
-	<script src="areamanager/areamanager.nut" type="server" />
+	<script src="areamanager/area.nut" type="shared" />
+	<script src="Overrides/areamanager.nut" type="shared" />
+
+	<import src="BASSWrapper/import.xml" />
 </server>

@@ -1,69 +1,62 @@
 <server>
-		<!-- Modules -->
-	<module src="Modules/MySQL.x64.dll" type="server" />
-
-		<!-- Constants -->
-	<script src="Constants/G2Constants.nut" type="shared" />
-	<script src="Constants/Creator.nut" type="shared" />
-
+	<!-- Shared -->
+		<script src="Shared/Constants.nut" type="shared" />
+		<script src="Shared/Config.nut" type="shared" />
 		<!-- Tables -->
-	<script src="Tables/Creator.nut" type="shared" />
-
-		<!-- Packets -->
-	<script src="Packets/PacketMessage/Hero/Stats.nut" type="shared" />
-	<script src="Packets/Hero/Stats/server.nut" type="server" />
-	<script src="Packets/Hero/Stats/client.nut" type="client" />
-	<script src="Packets/PacketMessage/Hero/Creator.nut" type="shared" />
-	<script src="Packets/Hero/Creator/server.nut" type="server" />
-	<script src="Packets/Hero/Creator/client.nut" type="client" />
-
-	<script src="Packets/PacketMessage/Journal/Journal.nut" type="shared" />
-	<script src="Packets/Journal/server.nut" type="server" />
-	<script src="Packets/Journal/client.nut" type="client" />
-
+			<script src="Shared/Tables/Seasons.nut" type="shared" />
+		<!-- Utility -->
+			<!-- <script src="Shared/Utility/Misc.nut" type="shared" /> -->
+			<script src="Shared/Utility/Convert.nut" type="shared" />
+			<script src="Shared/Utility/Position.nut" type="shared" />
+		<!-- PacketMessages -->
+			<script src="Shared/PacketMessages/Journal.nut" type="shared" />
+			<script src="Shared/PacketMessages/Dialogue.nut" type="shared" />
+			<script src="Shared/PacketMessages/Calendar.nut" type="shared" />
 		<!-- Classes -->
-	<script src="Classes/File.nut" type="server" />
-	<script src="Classes/MySQL.nut" type="server" />
-	<script src="Classes/Chat.nut" type="client" />
-	<script src="Classes/PrototypeHero.nut" type="server" />
-	<script src="Classes/Player.nut" type="server" />
-	<script src="Classes/NPC.nut" type="server" />
-	<script src="Classes/Inventory.nut" type="server" />
-	<script src="Classes/Item.nut" type="shared" />
-	<script src="Classes/Chunk.nut" type="server" />
-
-		<!-- Events -->
-
-
+			<script src="Shared/Class/DialogeManager.nut" type="shared" />
+			<script src="Shared/Class/Chunk.nut" type="shared" />
 		<!-- Functions -->
-	<script src="Functions/Utility/Convert.nut" type="shared" />
 
-	<script src="Functions/Utility/Checks/shared.nut" type="shared" />
+	
+	<!-- Server-Side -->
+		<!-- Classes -->
+			<script src="Server/HeroClass/Prototype.nut" type="server" />
+			<script src="Server/HeroClass/NPC.nut" type="server" />
+			<script src="Server/HeroClass/Player.nut" type="server" />
+				<script src="Server/Inventory.nut" type="server" />
+				<script src="Server/Calendar.nut" type="server" />
+		<!-- AI -->
+			<script src="Server/AI/state.nut" type="server" />
+			<script src="Server/AI/helpers.nut" type="server" />
+			<script src="Server/AI/update.nut" type="server" />
+			<script src="Server/AI/base.nut" type="server" />
+				<script src="Server/AI/routines/task.nut" type="server" />
+				<script src="Server/AI/routines/stand.nut" type="server" />
+					<script src="Server/AI/behaviour/neutral.nut" type="server" />
+					<script src="Server/AI/behaviour/agressive.nut" type="server" />
+					<script src="Server/AI/behaviour/agressive/humanoid.nut" type="server" />
+					<script src="Server/AI/behaviour/agressive/monster.nut" type="server" />
+				<script src="Server/AI/waynet.nut" type="server" />
+		<!-- Utility -->
+			<script src="Server/Functions/Utility/FileCheck.nut" type="server" />
+		<!-- Functions -->
+			<script src="Server/Functions/Journal.nut" type="server" />
+			<script src="Server/Functions/Dialoge.nut" type="shared"/>
+		<!-- Init -->
+			<script src="Server/Server.nut" type="server" />
 
-	<script src="Functions/Utility/Math/Range.nut" type="shared" />
-
-	<script src="Functions/Utility/Log.nut" type="server" />
-
-	<script src="Packets/Log/server.nut" type="server" />
-	<script src="Packets/Log/client.nut" type="client" />
-
-	<script src="Functions/Player/Login/client.nut" type="client" />
-	<script src="Functions/Player/Creator/client.nut" type="client" />
-	<script src="Functions/Player/Init.nut" type="server" />
-
-	<script src="Functions/NPC/Create.nut" type="server" />
-
-	<script src="Functions/Chat/Chat.nut" type="server" />
-	<script src="Functions/Chat/PrivateChat.nut" type="server" />
-	<script src="Functions/Chat/ServerChat.nut" type="server" />
-
-	<script src="Functions/DiscordActivity/client.nut" type="client" />
-
-		<!-- Callbacks -->
-	<script src="Callbacks/Players/Count.nut" type="server" />
-	<script src="Callbacks/Players/Distance.nut" type="server" />
-
-	<script src="Callbacks/Server/Information.nut" type="server" />
-
-		<!-- Daedalus -->
+	
+	<!-- Client-Side -->
+		<!-- Classes -->
+			<script src="Client/CLocalPlayer.nut" type="client" />
+		<!-- Interface -->
+			<script src="Client/CPlayerList.nut" type="client" />
+			<script src="Client/CChat.nut" type="client" />
+		<!-- Game -->
+			<script src="Client/Calendar.nut" type="client" />
+		<!-- Functions -->
+			<script src="Client/Functions/Journal.nut" type="client" />
+			<script src="Client/Functions/Dialoge.nut" type="client" />
+		<!-- Init -->
+			<script src="Client/Client.nut" type="client" />
 </server>

@@ -1,4 +1,10 @@
 <server>
+	<!-- Tables -->
+		<!-- NPCs -->
+			<script src="Tables/NPC/NPCs.nut" type="server"/>
+			<script src="Tables/NPC/Dialogues/DIA_000_TEST.nut" type="shared"/>
+
+	<!-- Init -->
 	<script src="Init_Server.nut" type="server" />
 	<script src="Init_Client.nut" type="client" />
 </server>

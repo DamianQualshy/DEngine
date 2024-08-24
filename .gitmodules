@@ -11,12 +11,9 @@
 [submodule "Submodules/tween.nut"]
 	path = Submodules/tween.nut
 	url = https://gitlab.com/g2o/scripts/tween.nut
-[submodule "Submodules/freecam"]
-	path = Submodules/freecam
-	url = https://gitlab.com/g2o/scripts/freecam
-[submodule "Submodules/camerapath"]
-	path = Submodules/camerapath
-	url = https://gitlab.com/g2o/scripts/camerapath
 [submodule "Submodules/inventory"]
 	path = Submodules/inventory
 	url = https://gitlab.com/g2o/scripts/inventory
+[submodule "Submodules/BASSWrapper"]
+	path = Submodules/BASSWrapper
+	url = https://github.com/G2O-Script-Workshop/BASSWrapper
