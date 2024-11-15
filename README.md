@@ -42,11 +42,6 @@ Download the 0.3.0 server files and place them in the cloned repo directory, the
 	<!-- Server -->
 		<!-- Import your scripts here -->
 ```
-Download the latest [BASS](https://gitlab.com/GothicMultiplayerTeam/modules/bass) and [LocalStorage](https://gitlab.com/GothicMultiplayerTeam/modules/LocalStorage) modules, and add them to the **config.xml** file of your server
-```xml
-<module src="LocalStorage.dll" type="client" />
-<module src="sq_bass.dll" type="client" />
-```
 Make sure you're using latest [MySQL](https://gitlab.com/GothicMultiplayerTeam/modules/mysql/-/releases) module, and for your operating system of choice
 ```xml
 <module src="MySQL.x64.dll" type="server" /> <!-- Windows 64-bit -->
